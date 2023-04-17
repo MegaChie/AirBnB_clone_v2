@@ -21,12 +21,18 @@ class BaseModel:
             self.created_at = datetime.now()
             self.updated_at = datetime.now()
         else:
-            kwargs['updated_at'] = datetime.strptime(kwargs['updated_at'],
-                                                     '%Y-%m-%dT%H:%M:%S.%f')
-            kwargs['created_at'] = datetime.strptime(kwargs['created_at'],
-                                                     '%Y-%m-%dT%H:%M:%S.%f')
-            del kwargs['__class__']
-            self.__dict__.update(kwargs)
+            for key in kwargs:
+                if key in ['created_at', 'updated_at']:
+                    setattr(self, key, datetime.fromisoformat(kwargs[key]))
+                elif key != '__class__':
+                    setattr(self, key, kwargs[key])
+            if storage_type == 'db':
+                if not hasattr(kwargs, 'id'):
+                    setattr(self, 'id', str(uuid.uuid4()))
+                if not hasattr(kwargs, 'created_at'):
+                    setattr(self, 'created_at', datetime.now())
+                if not hasattr(kwargs, 'updated_at'):
+                    setattr(self, 'updated_at', datetime.now()
 
     def __str__(self):
         """Returns a string representation of the instance"""
@@ -42,13 +48,12 @@ class BaseModel:
 
     def to_dict(self):
         """Convert instance into dict format"""
-        dictionary = {}
-        dictionary.update(self.__dict__)
-        dictionary.update({'__class__':
-                          (str(type(self)).split('.')[-1]).split('\'')[0]})
-        dictionary['created_at'] = self.created_at.isoformat()
-        dictionary['updated_at'] = self.updated_at.isoformat()
-        if '_sa_instance_state' in dictionary.key():
+        dictionary = self.__dict__.copy()
+        dictionary['__class__'] = self.__class__.__name__
+        for key in dictionary:
+            if type(dictionary[key]) is datetime:
+                dictionary[key] = dictionary[key].isoformat()
+        if '_sa_instance_state' in dictionary.keys():
             del(dictionary['_sa_instance_state'])
         return dictionary
 
