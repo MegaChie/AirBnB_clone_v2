@@ -24,7 +24,7 @@ if storage_type == 'db':
 
 
 class Place(BaseModel, Base):
-    """ A place to stay """
+    """ place class. """
     __tablename__ = 'places'
     if storage_type == 'db':
         city_id = Column(String(60), ForeignKey('cities.id'), nullable=False)
@@ -56,10 +56,7 @@ class Place(BaseModel, Base):
 
         @property
         def reviews(self):
-            ''' returns list of review instances with place_id
-                equals to the cyrrent Place.id
-                FileStorage relationship between Place and Review
-            '''
+            """ returns list of review instances with place_id. """
             from models import storage
             all_revs = storage.all(Review)
             lst = []
@@ -70,10 +67,8 @@ class Place(BaseModel, Base):
 
         @property
         def amenities(self):
-            ''' returns the list of Amenity instances
-                based on the attribute amenity_ids that
-                contains all Amenity.id linked to the Place
-            '''
+            """ returns the list of Amenity instances
+                based on the attribute amenity_ids. """
             from models import storage
             all_amens = storage.all(Amenity)
             lst = []
@@ -84,10 +79,8 @@ class Place(BaseModel, Base):
 
         @amenities.setter
         def amenities(self, obj):
-            ''' method for adding an Amenity.id to the
-                attribute amenity_ids. accepts only Amenity
-                objects
-            '''
+            """ method for adding an Amenity.id to the
+                attribute amenity_ids. """
             if obj is not None:
                 if isinstance(obj, Amenity):
                     if obj.id not in self.amenity_ids:

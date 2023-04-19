@@ -7,7 +7,7 @@ from sqlalchemy.orm import relationship
 
 
 class User(BaseModel, Base):
-    """This class defines a user by various attributes"""
+    """ user class. """
     __tablename__ = 'users'
     if storage_type == 'db':
         email = Column(String(128), nullable=False)
