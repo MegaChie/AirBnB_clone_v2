@@ -18,8 +18,6 @@ from models.review import Review
 
 class HBNBCommand(cmd.Cmd):
     """ Contains the functionality for the HBNB console"""
-
-    # determines prompt for interactive/non-interactive modes
     prompt = '(hbnb) ' if sys.__stdin__.isatty() else ''
 
     classes = {
@@ -41,9 +39,7 @@ class HBNBCommand(cmd.Cmd):
 
     def precmd(self, line):
         """ intercepts commands. """
-        _cmd = _cls = _id = _args = ''  # initialize line elements
-
-        # scan for general formating - i.e '.', '(', ')'
+        _cmd = _cls = _id = _args = ''
         if not ('.' in line and '(' in line and ')' in line):
             return line
 
@@ -71,7 +67,7 @@ class HBNBCommand(cmd.Cmd):
             return line
 
     def postcmd(self, stop, line):
-        """Prints if isatty is false"""
+        """ Prints if isatty is false. """
         if not sys.__stdin__.isatty():
             print('(hbnb) ', end='')
         return stop
@@ -220,7 +216,7 @@ class HBNBCommand(cmd.Cmd):
         """ Shows all objects. """
         print_list = []
         if args:
-            args = args.split(' ')[0]  # remove possible trailing args
+            args = args.split(' ')[0]
             if args not in HBNBCommand.classes:
                 print("** class doesn't exist **")
                 return
@@ -255,10 +251,10 @@ class HBNBCommand(cmd.Cmd):
         args = args.partition(" ")
         if args[0]:
             c_name = args[0]
-        else:  # class name not present
+        else:
             print("** class name missing **")
             return
-        if c_name not in HBNBCommand.classes:  # class name invalid
+        if c_name not in HBNBCommand.classes:
             print("** class doesn't exist **")
             return
         args = args[2].partition(" ")
