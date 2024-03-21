@@ -36,7 +36,7 @@ def pythonGame(text="is cool"):
 
 
 @app.route("/number/<int:n>", strict_slashes=False)
-def numberGame(num):
+def numberGame(n):
     """
     A small game of adding the most child route to a sentance and displaying it
     """
