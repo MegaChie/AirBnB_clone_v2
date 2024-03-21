@@ -35,12 +35,17 @@ def pythonGame(text="is cool"):
     return "Python {}".format(temp)
 
 
-@app.route("/number/<int:num>", strict_slashes=False)
-def numberGame(num):
+@app.route("/number/<int:n>", strict_slashes=False)
+def numberGame(n):
     """
     A small game of adding the most child route to a sentance and displaying it
     """
-    return "{} is a number".format(num)
+    return "{} is a number".format(n)
+
+
+@app.route("/number_template/<int:n>", strict_slashes=False)
+def numberTemplate(n):
+    return render_template("5-number.html", n=n)
 
 
 if __name__ == "__main__":
