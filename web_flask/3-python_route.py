@@ -23,6 +23,14 @@ def cGame(text):
     temp = text.replace("_", " ")
     return "C {}".format(temp)
 
+@app.route("/python/<text>", strict_slashes=False)
+def pythonGame(text="is cool"):
+    """
+    A small game of adding the most child route to a sentance and displaying it
+    """
+    temp = text.replace("_", " ")
+    return "Python {}".format(temp)
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0")
