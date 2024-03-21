@@ -10,6 +10,7 @@ def greeting():
     """Greets the user with a welcoming message"""
     return "Hello HBNB!"
 
+
 @app.route("/hbnb", strict_slashes=False)
 def HBNBGreeting():
     """Returns a message on the hbnb route"""
