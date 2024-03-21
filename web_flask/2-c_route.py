@@ -15,6 +15,14 @@ def HBNBGreeting():
     """Returns a message on the hbnb route"""
     return "HBNB"
 
+@app.route("/c/<text>", strict_slashes=False)
+def cGame(text):
+    """
+    A small game of adding the most child route to a sentance and displaying it
+    """
+    temp = text.replace("_", " ")
+    return "C {}".format(temp)
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0")
