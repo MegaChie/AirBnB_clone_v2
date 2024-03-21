@@ -7,7 +7,7 @@ app = fl(__name__)
 
 @app.route("/", strict_slashes=False)
 def greeting():
-    """It greets the user with a welcoming message"""
+    """Greets the user with a welcoming message"""
     return "Hello HBNB!"
 
 
