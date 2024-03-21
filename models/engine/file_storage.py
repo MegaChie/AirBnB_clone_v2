@@ -76,3 +76,7 @@ class FileStorage:
             return
         findObj = "{}.{}".format(type(obj).__name__, obj.id)
         del self.__objects[findObj]
+    
+    def close(self):
+        """Deserializing the JSON"""
+        self.reload()
