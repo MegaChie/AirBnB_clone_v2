@@ -18,7 +18,7 @@ def stateList():
 
 
 @app.teardown_appcontext
-def app_teardown(arg=None):
+def SessTerm(arg=None):
     """Saves list and closes session to free resources"""
     storage.close()
 
