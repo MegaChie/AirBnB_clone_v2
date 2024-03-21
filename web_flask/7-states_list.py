@@ -9,7 +9,7 @@ app = fl(__name__)
 
 
 @app.route("/states_list")
-def states_list():
+def stateList():
     """Builds a list an ordered states list"""
     path = "7-states_list.html"
     states = storage.all(State)
