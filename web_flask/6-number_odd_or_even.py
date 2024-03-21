@@ -50,5 +50,15 @@ def numberTemplate(n):
     return rentem("5-number.html", n=n)
 
 
+@app.route("/number_odd_or_even/<int:n>", strict_slashes=False)
+def evenOrNot(n):
+    """
+    Builds a page to:
+    - displays the passed number in it.
+    - tell if the number is evern or odd.
+    """
+    return rentem("6-number_odd_or_even.html", n=n)
+
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0")
