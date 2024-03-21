@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 """Starts a Flask web application"""
 from flask import Flask as fl
+from flask import render_template as rentem
 
 app = fl(__name__)
 
@@ -46,7 +47,7 @@ def numberGame(n):
 @app.route("/number_template/<int:n>", strict_slashes=False)
 def numberTemplate(n):
     """Builds a page to displays the passed number in"""
-    return render_template("5-number.html", n=n)
+    return rentem("5-number.html", n=n)
 
 
 if __name__ == "__main__":
