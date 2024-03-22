@@ -27,6 +27,7 @@ def cGame(text):
 
 
 @app.route("/python/<text>", strict_slashes=False)
+@app.route("/python", strict_slashes=False)
 def pythonGame(text="is cool"):
     """
     A small game of adding the most child route to a sentance and displaying it
