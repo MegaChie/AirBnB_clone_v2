@@ -11,8 +11,9 @@ app = fl(__name__)
 def stateList():
     """Builds a list an ordered states list"""
     path = "7-states_list.html"
-    states = storage.all("State")
-    return rentem(path, states=states)
+    states = storage.all(State)
+    sorted_states = sorted(states.values(), key=lambda state: state.name)
+    return render_template(path, sorted_states=sorted_states)
 
 
 @app.teardown_appcontext
