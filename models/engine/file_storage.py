@@ -10,14 +10,12 @@ from models.state import State
 from models.user import User
 
 
-
 class FileStorage:
     """This class manages storage of hbnb models in JSON format"""
     __file_path = 'file.json'
     __objects = {}
     classes = {"BaseModel": BaseModel, "Amenity": Amenity, "City": City,
                "Place": Place, "Review": Review, "State": State, "User": User}
-
 
     def all(self, cls=None):
         """Returns a dictionary of models currently in storage"""
@@ -30,8 +28,6 @@ class FileStorage:
         else:
             want = self.__objects
         return want
-
-            
 
     def new(self, obj):
         """Adds new object to storage dictionary"""
@@ -76,7 +72,7 @@ class FileStorage:
             return
         findObj = "{}.{}".format(type(obj).__name__, obj.id)
         del self.__objects[findObj]
-    
+
     def close(self):
         """Deserializing the JSON"""
         self.reload()
