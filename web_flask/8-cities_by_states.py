@@ -36,7 +36,7 @@ def states_list():
 
 
 @app.teardown_appcontext
-def sessClos():
+def sessClos(arg=None):
     """Remove the current SQLAlchemy session."""
     storage.close()
 
