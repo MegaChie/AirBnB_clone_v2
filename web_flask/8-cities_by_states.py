@@ -32,7 +32,7 @@ def states_list():
             if cty.state_id == elem:
                 added.append([cty.id, cty.name])
         statCity[elem] = added
-    return rentem("8-cities_by_states.html", ids=idNumb, names=name, ctysta=statCity)
+    return rentem("8-cities_by_states.html", ids=idNumb, names=name, ctysta=statCity, listed=temp)
 
 
 @app.teardown_appcontext

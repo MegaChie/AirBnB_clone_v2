@@ -6,10 +6,10 @@
     <BODY>
         <H1>States</H1>
         <UL>
-		{% for i in range(13) %}
-            <LI>{{ ids[i] }}: <B>{{ names[i] }}</B></LI>
+		{% for i in listed %}
+            <LI>{{ i.id }}: <B>{{ i.name }}</B></LI>
                 <UL>
-                {% for j in ctysta[ids[i]] %}
+                {% for j in ctysta[i.id] %}
                     <LI>{{ j[0] }}: <B>{{ j[-1] }}</B></LI>
                 {% endfor %}
                 </UL>
@@ -17,3 +17,4 @@
         </UL>
     </BODY>
 </HTML>
+
