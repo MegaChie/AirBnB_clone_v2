@@ -19,12 +19,10 @@ def states_list():
     """
     states = storage.all(State)
     temp = states.values()
-    name = []
     idNumb = []
     for k in temp:
-        name.append(k.name)
         idNumb.append(k.id)
-    return rentem("7-states_list.html", ids=idNumb, names=name)
+    return rentem("7-states_list.html", listed=temp)
 
 
 @app.teardown_appcontext

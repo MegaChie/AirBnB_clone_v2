@@ -6,8 +6,8 @@
     <BODY>
         <H1>States</H1>
         <UL>
-		{% for i in range(13) %}
-            <LI>{{ ids[i] }}: <B>{{ names[i] }}</B></LI>
+		{% for i in listed %}
+            <LI>{{ i.id }}: <B>{{ i.name }}</B></LI>
 		{% endfor %}
         </UL>
     </BODY>
