@@ -23,7 +23,7 @@ def states_list():
     for k in temp:
         name.append(k.name)
         idNumb.append(k.id)
-    return rentem("7-states_list.html", listed=states)
+    return rentem("7-states_list.html", ids=idNumb, names=name)
 
 
 @app.teardown_appcontext

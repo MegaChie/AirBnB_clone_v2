@@ -23,7 +23,6 @@ def cGame(text):
     A small game of adding the most child route to a sentance and displaying it
     """
     temp = text.replace("_", " ")
-    print("text replace")
     return "C {}".format(temp)
 
 
