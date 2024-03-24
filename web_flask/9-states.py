@@ -13,7 +13,7 @@ app = fl(__name__)
 
 
 @app.route("/states/<id>", strict_slashes=False)
-def states_list():
+def cityList():
     """Displays an HTML page with a list of all Cities with the id in the URL
     """
     city = storage.all("City")
@@ -22,11 +22,11 @@ def states_list():
 
 
 @app.route("/states", strict_slashes=False)
-def states_list():
+def stateList():
     """Displays an HTML page with a list of all State objects in DBStorage.
     States are sorted by name.
     """
-    states = storage.all(State)
+    states = storage.all("State")
     temp = states.values()
     return rentem("9-states.html", listed=temp)
 
