@@ -32,7 +32,7 @@ def states_list():
                 added.append([cty.id, cty.name])
         added = sorted(added, key=itemgetter(1))
         statCity[elem] = added
-    return rentem("8-cities_by_states.html", ids=idNumb, ctysta=statCity, listed=temp)
+    return rentem("8-cities_by_states.html", ctysta=statCity, listed=temp)
 
 
 @app.teardown_appcontext
