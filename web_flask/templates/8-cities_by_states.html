@@ -10,7 +10,7 @@
             <LI>{{ i.id }}: <B>{{ i.name }}</B></LI>
                 <UL>
                 {% for j in ctysta[i.id] %}
-                    <LI>{{ j[0] }}: <B>{{ j[-1] }}</B></LI>
+		<LI>{{ j[0] }}: <B>{{ j[-1] }}</B></LI>
                 {% endfor %}
                 </UL>
 		{% endfor %}
