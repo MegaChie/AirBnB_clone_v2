@@ -5,26 +5,34 @@ Routes:
     /states_list: HTML page with a list of all State objects in DBStorage.
 """
 from models import storage
-from models.state import State
 from flask import Flask as fl
 from flask import render_template as rentem
 
 app = fl(__name__)
 
 
-@app.route("/states_list", strict_slashes=False)
+@app.route("/cities_by_states", strict_slashes=False)
 def states_list():
     """Displays an HTML page with a list of all State objects in DBStorage.
     States are sorted by name.
     """
-    states = storage.all(State)
+    states = storage.all("State")
     temp = states.values()
+    city = storage.all("City")
+    cityList = city.values()
     name = []
     idNumb = []
-    for k in temp:
-        name.append(k.name)
-        idNumb.append(k.id)
-    return rentem("7-states_list.html", ids=idNumb, names=name)
+    statCity = {}
+    for elem in temp:
+        name.append(elem.name)
+        idNumb.append(elem.id)
+    for elem in idNumb:
+        added = []
+        for cty in cityList:
+            if cty.state_id == elem:
+                added.append([cty.id, cty.name])
+        statCity[elem] = added
+    return rentem("8-cities_by_states.html", ids=idNumb, names=name, ctysta=statCity)
 
 
 @app.teardown_appcontext
