@@ -12,27 +12,23 @@ from operator import itemgetter
 app = fl(__name__)
 
 
-@app.route("/cities_by_states", strict_slashes=False)
+@app.route("/states/<id>", strict_slashes=False)
+def states_list():
+    """Displays an HTML page with a list of all Cities with the id in the URL
+    """
+    city = storage.all("City")
+    cityList = city.values()
+    return rentem("9-states.html")
+
+
+@app.route("/states", strict_slashes=False)
 def states_list():
     """Displays an HTML page with a list of all State objects in DBStorage.
     States are sorted by name.
     """
-    states = storage.all("State")
+    states = storage.all(State)
     temp = states.values()
-    city = storage.all("City")
-    cityList = city.values()
-    idNumb = []
-    statCity = {}
-    for elem in temp:
-        idNumb.append(elem.id)
-    for elem in idNumb:
-        added = []
-        for cty in cityList:
-            if cty.state_id == elem:
-                added.append([cty.id, cty.name])
-        added = sorted(added, key=itemgetter(1))
-        statCity[elem] = added
-    return rentem("8-cities_by_states.html", ctysta=statCity, listed=temp)
+    return rentem("9-states.html", listed=temp)
 
 
 @app.teardown_appcontext
