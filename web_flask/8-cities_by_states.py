@@ -36,11 +36,10 @@ def states_list():
 
 
 @app.teardown_appcontext
-def sessClos(arg=None):
+def sessClos():
     """Remove the current SQLAlchemy session."""
     storage.close()
 
 
 if __name__ == "__main__":
-    app.url_map.strict_slashes = False
     app.run(host="0.0.0.0", port=5000)
