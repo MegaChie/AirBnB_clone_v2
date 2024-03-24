@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<HTML lang="en">
+    <HEAD>
+        <TITLE>HBNB</TITLE>
+    </HEAD>
+    <BODY>
+        <H1>States</H1>
+        <UL>
+		{% for i in range(13) %}
+            <LI>{{ ids[i] }}: <B>{{ names[i] }}</B></LI>
+		{% endfor %}
+        </UL>
+    </BODY>
+</HTML>
