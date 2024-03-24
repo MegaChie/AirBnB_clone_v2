@@ -9,8 +9,8 @@
 		{% for i in range(13) %}
             <LI>{{ ids[i] }}: <B>{{ names[i] }}</B></LI>
                 <UL>
-                {% for j in range(ctysta[ids[i]]) %}
-                    <LI>{{ ctysta[ids[i]][j][o] }}: <B>ctysta[ids[i]][j][-1]</B></LI>
+                {% for j in ctysta[ids[i]] %}
+                    <LI>{{ j[0] }}: <B>{{ j[-1] }}</B></LI>
                 {% endfor %}
                 </UL>
 		{% endfor %}
