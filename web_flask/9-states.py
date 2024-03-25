@@ -13,12 +13,21 @@ app = fl(__name__)
 
 
 @app.route("/states/<id>", strict_slashes=False)
-def cityList():
+def cityList(id):
     """Displays an HTML page with a list of all Cities with the id in the URL
     """
-    city = storage.all("City")
-    cityList = city.values()
-    return rentem("9-states.html")
+    states = storage.all("State").values()
+    cities = storage.all("City").values()
+    ret = None
+    ctyList = []
+    for elem in states:
+        if elem.id == id:
+            ret = elem.name
+    for elem in cities:
+        if elem.state_id == id:
+            ctyList.append([elem.id, elem.name])
+    ctyList = sorted(ctyList, key=itemgetter(1))
+    return rentem("9-states.html", statName=ret, statctys=ctyList)
 
 
 @app.route("/states", strict_slashes=False)
