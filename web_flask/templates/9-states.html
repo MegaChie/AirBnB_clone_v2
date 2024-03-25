@@ -3,7 +3,6 @@
     <HEAD>
         <TITLE>HBNB</TITLE>
     </HEAD>
-
     <BODY>
     {% if listed %}
     <H1>States</H1>
@@ -13,15 +12,15 @@
         {% endfor %}
     </UL>
     {% elif statName %}
-    <H1>State: {{ statName }}</H1>
-    <H3>Cities:</H3>
-    <UL>
+        <H1>State: {{ statName }}</H1>
+        <H3>Cities:</H3>
+        <UL>
         {% for j in statctys %}
-        <LI>{{ j[0] }}: <B>{{ j[-1] }}</B></LI>
+                <LI>{{ j[0] }}: <B>{{ j[-1] }}</B></LI>
         {% endfor %}
-    </UL>
+        </UL>
     {% else %}
-    <H1>Not found!</H1>
+        <H1>Not found!</H1>
     {% endif %}
     </BODY>
 </HTML>
