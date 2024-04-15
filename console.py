@@ -36,11 +36,7 @@ class HBNBCommand(cmd.Cmd):
             print('(hbnb)')
 
     def precmd(self, line):
-        """Reformat command line for advanced command syntax.
-
-        Usage: <class name>.<command>([<id> [<*args> or <**kwargs>]])
-        (Brackets denote optional fields in usage example.)
-        """
+        """Reformat command line for advanced command syntax."""
         _cmd = _cls = _id = _args = ''  # initialize line elements
 
         # scan for general formating - i.e '.', '(', ')'
@@ -114,10 +110,7 @@ class HBNBCommand(cmd.Cmd):
         pass
 
     def do_create(self, args):
-        """ Create an object of any class
-            Command syntax: create <Class name> <param 1> <param 2> <param 3>...
-            Param syntax: <key name>=<value>
-        """
+        """ Create an object of any clas"""
         try:
             if not args:
                 raise SyntaxError()
