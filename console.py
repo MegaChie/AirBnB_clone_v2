@@ -114,18 +114,33 @@ class HBNBCommand(cmd.Cmd):
         pass
 
     def do_create(self, args):
-        """ Create an object of any class"""
+        """ Create an object of any class
+            Command syntax: create <Class name> <param 1> <param 2> <param 3>...
+            Param syntax: <key name>=<value>
+        """
         try:
             if not args:
                 raise SyntaxError()
-            arg_list = args.split(" ")
-            kw = {}
-            for arg in arg_list[1:]:
-                arg_splited = arg.split("=")
-                arg_splited[1] = eval(arg_splited[1])
-                if type(arg_splited[1]) is str:
-                    arg_splited[1] = arg_splited[1].replace("_", " ").replace('"', '\\"')
-                kw[arg_splited[0]] = arg_splited[1]
+            my_list = line.split(" ")
+
+            kwargs = {}
+            for i in range(l, len(my_list)):
+                key, value = tuple(my_list[i].split("="))
+                if value[0] == '"':
+                    value = value.stripe('"').replace("_", " ")
+                else:
+                    try:
+                        value = eval(value)
+                    except (SyntaxError, NameError):
+                        continue
+                kwargs[key] = value
+                if kwargs == {}:
+                    obj = evval(my_list[0])()
+                else:
+                    obj = eval(my_list[0])(**kwargs)
+                    storage.new(obj)
+                print(obj.id)
+                obj.save()
         except SyntaxError:
             print("** class name missing **")
         except NameError:
