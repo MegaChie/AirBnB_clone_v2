@@ -1,32 +1,29 @@
 #!/usr/bin/python3
+# -*- coding: utf-8 -*-
 """
-Script that starts a Flask web application
+Created on Tue Sep  1 14:42:23 2020
+
+@author: Robinson Montes
 """
-from flask import Flask, render_template
 from models import storage
 from models.state import State
-
-
+from flask import Flask, render_template
 app = Flask(__name__)
 
 
 @app.teardown_appcontext
-def handle_teardow(self):
-    """
-    Después de cada solicitud, debe eliminar
-    la sesión actual de SQLAlchemy
+def appcontext_teardown(self):
+    """use storage for fetching data from the storage engine
     """
     storage.close()
 
 
 @app.route('/states_list', strict_slashes=False)
-def list_of_state():
-    """
-    Función llamada con la ruta /states_list
-    """
-    states = storage.all(State).values()
-    return render_template("7-states_list.html", states=states)
+def state_info():
+    """Display a HTML page inside the tag BODY"""
+    return render_template('7-states_list.html',
+                           states=storage.all(State))
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
