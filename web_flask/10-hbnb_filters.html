@@ -9,11 +9,12 @@ from models import storage
 app = Flask(__name__)
 
 
-@app.route('/cities_by_states', strict_slashes=False)
-def cities_by_states():
-    """displays the citites and states in alphabetical order"""
+@app.route('/hbnb_filters', strict_slashes=False)
+def filters():
+    """displays a HTML page like 6-index.html"""
     states = storage.all("State").values()
-    return render_template('8-cities_by_states.html', states=states)
+    amenities = storage.all("State").values()
+    return render_template('10-hbnb_filters.html', states=states, amenities=amenties)
 
 
 @app.teardown_apcontext
