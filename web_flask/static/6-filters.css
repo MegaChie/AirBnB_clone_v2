@@ -1,0 +1,6 @@
+/* Styles for filters */
+.dropdown-menu {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
