@@ -1,0 +1,8 @@
+-- This is the SQL script to create the place_amenity table for the Many-To-Many relationship
+CREATE TABLE place_amenity (
+    place_id VARCHAR(60) NOT NULL,
+    amenity_id VARCHAR(60) NOT NULL,
+    PRIMARY KEY (place_id, amenity_id),
+    FOREIGN KEY (place_id) REFERENCES places(id) ON DELETE CASCADE,
+    FOREIGN KEY (amenity_id) REFERENCES amenities(id) ON DELETE CASCADE
+);

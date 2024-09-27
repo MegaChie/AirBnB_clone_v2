@@ -1,9 +1,15 @@
-#!/usr/bin/python3
-""" City Module for HBNB project """
-from models.base_model import BaseModel
+#!/usr/bin/env python3
+"""City class module for AirBnB clone."""
 
+from models.base_model import BaseModel, Base
+from sqlalchemy import Column, String, ForeignKey
+from sqlalchemy.orm import relationship
 
-class City(BaseModel):
-    """ The city class, contains state ID and name """
-    state_id = ""
-    name = ""
+class City(BaseModel, Base):
+    """Represents a city for the AirBnB clone."""
+    
+    __tablename__ = 'cities'
+    
+    name = Column(String(128), nullable=False)
+    
+    places = relationship("Place", back_populates="city", cascade="all, delete-orphan")
