@@ -2,6 +2,9 @@
 """ Console Module """
 import cmd
 import sys
+from shlex import split
+from models import storage
+from datetime import datetime
 from models.base_model import BaseModel
 from models.__init__ import storage
 from models.user import User
@@ -13,16 +16,55 @@ from models.review import Review
 
 
 class HBNBCommand(cmd.Cmd):
-    """ Contains the functionality for the HBNB console"""
+    """ Contains the functionality for the HBNB command interpreter"""
 
     # determines prompt for interactive/non-interactive modes
-    prompt = '(hbnb) ' if sys.__stdin__.isatty() else ''
+    prompt = "(hbnb)" 
+  
 
-    classes = {
-               'BaseModel': BaseModel, 'User': User, 'Place': Place,
-               'State': State, 'City': City, 'Amenity': Amenity,
+    __classes = {
+               'BaseModel': BaseModel, 
+               'User': User, 
+               'Place': Place,
+               'State': State, 
+               'City': City, 
+               'Amenity': Amenity,
                'Review': Review
               }
+
+    def emptyline(self):
+        """ignores empty lines"""
+        pass
+
+    def do_quit(self, line):
+        """quit command and exit program"""
+        return True
+
+    def do_EOF(self, line):
+        print("")
+        return True
+
+    def do_create(self, line):
+        try:
+            if not line:
+                raise SyntaxError()
+            my_list = line.split(" ")
+
+            kwargs = {}
+            for i in range(1, len(my_list)):
+                key, value = tuple(my_list[i].split("="))
+                if value[0] == '"':
+                    value = value.strip('"').replace("_", " ")
+                else:
+                    try:
+                        value = eval(value)
+                    except (SyntaxError, NameError):
+                        continue
+                    kwargs[key] = value
+
+    
+    
+
     dot_cmds = ['all', 'count', 'show', 'destroy', 'update']
     types = {
              'number_rooms': int, 'number_bathrooms': int,
@@ -257,7 +299,6 @@ class HBNBCommand(cmd.Cmd):
 
         # generate key from class and id
         key = c_name + "." + c_id
-
         # determine if key is present
         if key not in storage.all():
             print("** no instance found **")
