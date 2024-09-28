@@ -1,4 +1,3 @@
-
 #!/usr/bin/python3
 """Base model module.
 
@@ -63,4 +62,3 @@ class BaseModel:
     def delete(self):
         """Delete the current instance from the storage."""
         models.storage.delete(self)
-
