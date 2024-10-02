@@ -7,7 +7,7 @@ sudo service nginx start
 sudo mkdir -p /data/web_static/shared/
 sudo mkdir -p /data/web_static/releases/test/
 # Creating a fake HTML file with simple content
-echo 'Mediqueueless' | sudo tee /data/web_static/releases/test/index.html
+echo 'Rethics' | sudo tee /data/web_static/releases/test/index.html
 #Creating a symbolic link
 ln -sf /data/web_static/releases/test/ /data/web_static/current
 # Giving ownership of the /data/ folder to the ubuntu user AND group
