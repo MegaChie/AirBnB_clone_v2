@@ -138,10 +138,18 @@ class HBNBCommand(cmd.Cmd):
                 continue
         # key will be index 0 before =
         # value will be index 1 after =
-            key = params[p].split("=")[1]
-            value = params[p].split("=")[1]
+            key, value = params[p].split("=")
+            key = key.strip()
+            value = value.strip('"')
+            if key in HBNBCommand.types:
+                try:
+                    value = HBNBCommand.types[key](value)
+                except ValueError:
+                    print("** value must be a valid {} **".format(HBNBCommand.types[key].__name__))
+                    return
+
         # if value starts with " get rid of it, and replace _ with a space
-            if value.startswith('"') and value.endswith('"'):
+            elif value.startswith('"') and value.endswith('"'):
                 value = value[1:-1].replace("_", " ").replace('\\"', '"')
 
             elif "." in value:
