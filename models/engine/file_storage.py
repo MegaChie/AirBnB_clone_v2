@@ -71,6 +71,9 @@ class FileStorage:
             key = str(obj)
             if key in FileStorage.__objects:
                 del FileStorage.__objects[key]
+                print(f"deleted {key}")
             else:
                 print(f"{str(obj)} doesn't exist in filestorage")
+        else:
+            print("can't delete  onject")
     # -------------------------------------
