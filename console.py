@@ -115,45 +115,36 @@ class HBNBCommand(cmd.Cmd):
 
     def do_create(self, args):
         """ Create an object of any class"""
-        if not args:
-            print("** class name missing **")
-            return
-        elif args not in HBNBCommand.classes:
-            print("** class doesn't exist **")
-            return
-        
         # ----------------
         # split args inbetween spaces
         params = args.split(" ")
         class_name = params[0]
+
+        if not class_name:
+            print("** class name missing **")
+            return
+        elif class_name not in HBNBCommand.classes:
+            print("** class doesn't exist **")
+            return
+        
         # empty dict for keyword args
         kwargs = {}
         # now that params are split, we need to sort through them and split each one at the =
         # like given in example: city_id="0001", we start at range 1 since name is at index 0
-        for p in params[1:]:
+        for p in range(1, len(params), 2):
         # key will be index 0 before =
         # value will be index 1 after =
-            key_value = p.split("=", 1)
-
-            if len(key_value) != 2:
-                continue
-            
-            key = key_value
-            value = key_value
-
-            key = key.strip()
-            value = value.strip()
+            key = params[p].split("=")[0]
+            value = params[p].split("=")[1]
         # if value starts with " get rid of it, and replace _ with a space
             if value.startswith('"') and value.endswith('"'):
-                value = value.replace('\\', '').replace("_", " ").replace('"', '')
-            
-            try:
-                kwargs[key] = float(value)
-            except ValueError:
+                value = value.strip('"').replace("_", " ")
+            else:
                 try:
-                    kwargs[key] = int(value)
-                except ValueError:
-                    kwargs[key] = value
+                    value = eval(value)
+                except (NameError):
+                    continue
+            kwargs[key] = value
         # added class name and kwargs
         new_instance = HBNBCommand.classes[class_name](**kwargs)
         storage.save()
