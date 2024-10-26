@@ -118,12 +118,13 @@ class HBNBCommand(cmd.Cmd):
         """ Create an object of any class"""
         # ----------------
         # split args inbetween spaces
-        params = args.split(" ")
+        params = args.split()
         class_name = params[0]
 
         if not class_name:
             print("** class name missing **")
             return
+        
         elif class_name not in HBNBCommand.classes:
             print("** class doesn't exist **")
             return
@@ -132,25 +133,39 @@ class HBNBCommand(cmd.Cmd):
         kwargs = {}
         # now that params are split, we need to sort through them and split each one at the =
         # like given in example: city_id="0001", we start at range 1 since name is at index 0
-        for p in range(1, len(params), 2):
+        for p in params[1:]:
+            if "=" not in params:
+                continue
         # key will be index 0 before =
         # value will be index 1 after =
             key = params[p].split("=")[0]
             value = params[p].split("=")[1]
         # if value starts with " get rid of it, and replace _ with a space
             if value.startswith('"') and value.endswith('"'):
-                value = value.strip('"').replace("_", " ")
+                value = value[1:-1].replace("_", " ").replace('\\"', '"')
+
+            elif "." in value:
+                try:
+                    value = float(value)
+                except ValueError:
+                    continue
             else:
                 try:
-                    value = eval(value)
-                except (NameError):
+                    value = int(value)
+                except (ValueError):
                     continue
             kwargs[key] = value
+
         # added class name and kwargs
-        new_instance = HBNBCommand.classes[class_name](**kwargs)
-        storage.save()
-        print(new_instance.id)
-        storage.save()
+        try:
+            new_instance = HBNBCommand.classes[class_name](**kwargs)
+            storage.save()
+            new_instance.save()
+            print(new_instance.id)
+            storage.save()
+        except Exception as e:
+            print(f"exceptinon error: {e}")
+            return
         # -----------------------------
 
     def help_create(self):
