@@ -114,68 +114,6 @@ class HBNBCommand(cmd.Cmd):
         """ Overrides the emptyline method of CMD """
         pass
 
-    def do_create(self, args):
-        """ Create an object of any class"""
-        # ----------------
-        # split args inbetween spaces
-        params = args.split()
-        class_name = params[0]
-
-        if not class_name:
-            print("** class name missing **")
-            return
-        
-        elif class_name not in HBNBCommand.classes:
-            print("** class doesn't exist **")
-            return
-        
-        # empty dict for keyword args
-        kwargs = {}
-        # now that params are split, we need to sort through them and split each one at the =
-        # like given in example: city_id="0001", we start at range 1 since name is at index 0
-        for p in params[1:]:
-            if "=" not in params:
-                continue
-        # key will be index 0 before =
-        # value will be index 1 after =
-            key, value = params[p].split("=")
-            key = key.strip()
-            value = value.strip('"')
-            if key in HBNBCommand.types:
-                try:
-                    value = HBNBCommand.types[key](value)
-                except ValueError:
-                    print("** value must be a valid {} **".format(HBNBCommand.types[key].__name__))
-                    return
-
-        # if value starts with " get rid of it, and replace _ with a space
-            elif value.startswith('"') and value.endswith('"'):
-                value = value[1:-1].replace("_", " ").replace('\\"', '"')
-
-            elif "." in value:
-                try:
-                    value = float(value)
-                except ValueError:
-                    continue
-            else:
-                try:
-                    value = int(value)
-                except (ValueError):
-                    continue
-            kwargs[key] = value
-
-        # added class name and kwargs
-        try:
-            new_instance = HBNBCommand.classes[class_name](**kwargs)
-            storage.save()
-            new_instance.save()
-            print(new_instance.id)
-            storage.save()
-        except Exception as e:
-            print(f"exceptinon error: {e}")
-            return
-        # -----------------------------
-
     def help_create(self):
         """ Help information for the create method """
         print("Creates a class of any type")
@@ -369,6 +307,74 @@ class HBNBCommand(cmd.Cmd):
         """ Help information for the update class """
         print("Updates an object with new information")
         print("Usage: update <className> <id> <attName> <attVal>\n")
+
+    # --------------------------------------------
+    def do_create(self, args):
+        """ Create an object of any class"""
+        # split args with whitespace as delimeter, and class_name is index 0
+        params = args.split()
+        class_name = params[0]
+
+        # make sure class_name exists
+        if not class_name:
+            print("** class name missing **")
+            return
+        
+        elif class_name not in HBNBCommand.classes:
+            print("** class doesn't exist **")
+            return
+        
+        # empty dictionary
+        kwargs = {}
+
+        # search list for '='
+        for p in params[1:]:
+            if "=" not in params:
+                continue
+        
+            # split key and value into seprate parameters
+            key, value = params[p].split("=")
+            key = key.strip()
+            value = value.strip('"')
+
+            # section handles the data types
+            if key in HBNBCommand.types:
+                try:
+                    value = HBNBCommand.types[key](value)
+                except ValueError:
+                    print("** value must be a valid {} **".format(HBNBCommand.types[key].__name__))
+                    return
+            # remove the first and last " if it starts and ends with
+            # replace _ and \\
+            elif value.startswith('"') and value.endswith('"'):
+                value = value[1:-1].replace("_", " ").replace('\\"', '"')
+            # if it has a . it needs to be treated as a float
+            elif "." in value:
+                try:
+                    value = float(value)
+                except ValueError:
+                    continue
+            # if not float try int
+            else:
+                try:
+                    value = int(value)
+                except (ValueError):
+                    continue
+            # assign the value to the correct keyword
+            kwargs[key] = value
+        # create a new instance of this class, save it, print it, and save again
+        try:
+            new_instance = HBNBCommand.classes[class_name](**kwargs)
+            storage.save()
+            new_instance.save()
+            print(new_instance.id)
+            storage.save()
+        # broad exception that should cover most
+        except Exception as e:
+            print(f"exceptinon error: {e}")
+            return
+        # -----------------------------
+
 
 if __name__ == "__main__":
     HBNBCommand().cmdloop()
