@@ -121,10 +121,45 @@ class HBNBCommand(cmd.Cmd):
         elif args not in HBNBCommand.classes:
             print("** class doesn't exist **")
             return
-        new_instance = HBNBCommand.classes[args]()
+        
+        # ----------------
+        # split args inbetween spaces
+        params = args.split(" ")
+        class_name = params[0]
+        # empty dict for keyword args
+        kwargs = {}
+        # now that params are split, we need to sort through them and split each one at the =
+        # like given in example: city_id="0001", we start at range 1 since name is at index 0
+        for p in params[1:]:
+        # key will be index 0 before =
+        # value will be index 1 after =
+            key_value = p.split("=", 1)
+
+            if len(key_value) != 2:
+                continue
+            
+            key = key_value
+            value = key_value
+
+            key = key.strip()
+            value = value.strip()
+        # if value starts with " get rid of it, and replace _ with a space
+            if value.startswith('"') and value.endswith('"'):
+                value = value.replace('\\', '').replace("_", " ").replace('"', '')
+            
+            try:
+                kwargs[key] = float(value)
+            except ValueError:
+                try:
+                    kwargs[key] = int(value)
+                except ValueError:
+                    kwargs[key] = value
+        # added class name and kwargs
+        new_instance = HBNBCommand.classes[class_name](**kwargs)
         storage.save()
         print(new_instance.id)
         storage.save()
+        # -----------------------------
 
     def help_create(self):
         """ Help information for the create method """
