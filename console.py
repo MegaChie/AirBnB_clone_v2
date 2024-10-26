@@ -138,7 +138,7 @@ class HBNBCommand(cmd.Cmd):
                 continue
         # key will be index 0 before =
         # value will be index 1 after =
-            key = params[p].split("=")[0]
+            key = params[p].split("=")[1]
             value = params[p].split("=")[1]
         # if value starts with " get rid of it, and replace _ with a space
             if value.startswith('"') and value.endswith('"'):
