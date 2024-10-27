@@ -68,12 +68,6 @@ class FileStorage:
     def delete(self, obj=None):
         """ deletes an obj if there is one from __objects"""
         if obj is not None:
-            key = str(obj)
-            if key in FileStorage.__objects:
-                del FileStorage.__objects[key]
-                print(f"deleted {key}")
-            else:
-                print(f"{str(obj)} doesn't exist in filestorage")
-        else:
-            print("can't delete  onject")
+            key = f"{obj.__class__.__name__}.{obj.id}"
+            del FileStorage.__objects[key]
     # -------------------------------------
