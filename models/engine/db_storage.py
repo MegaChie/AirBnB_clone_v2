@@ -13,14 +13,15 @@ class DBStorage:
 
 	def __init__(self):
 		""" initialize DBStorage class """
-		# create engine, basically the bridge between python and database
-		self.__engine = create_engine('mysql+mysqldb://{user}:{password}@{host}/{database}', pool_pre_ping=True)
-
 		# retrieve env variables
 		user = os.getenv('HBNB_MYSQL_USER')
 		password = os.getenv('HBNB_MYSQL_PWD')
 		host = os.getenv('HBNB_MYSQL_HOST', 'localhost')
 		database = os.getenv('HBNB_MYSQL_DB')
+
+		# create engine, basically the bridge between python and database
+		self.__engine = create_engine('mysql+mysqldb://{}:{}@{}/{}'.format(
+            user, password, host, database), pool_pre_ping=True)
 
 		# drop all tables if env is equal to test
 		if os.getenv('HBNB_ENV') == 'test':
@@ -28,23 +29,23 @@ class DBStorage:
 
 		# -----------------------------------
 		# Need to complete this part
-		def all(self, cls=None):
+	def all(self, cls=None):
 			""" query on the current database """
 		
-		def new (self, obj):
+	def new (self, obj):
 			""" new object """
 			self.__session.add(obj)
 
-		def save(self):
+	def save(self):
 			""" save object """
 			self.__session.commit()
 
-		def delete(self, obj=None):
+	def delete(self, obj=None):
 			""" delete object """
 			if obj:
 				self.__session.delete(obj)
 
-		def reload(self):
+	def reload(self):
 			""" create all the tables in db"""
 			# import all classes from base
 			from models.user import User
