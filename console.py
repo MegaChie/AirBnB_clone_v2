@@ -10,7 +10,6 @@ from models.state import State
 from models.city import City
 from models.amenity import Amenity
 from models.review import Review
-from models.engine.file_storage import FileStorage
 import json
 
 
@@ -316,11 +315,11 @@ class HBNBCommand(cmd.Cmd):
         params = args.split()
         class_name = params[0]
 
-        # make sure class_name provided
-        if len(params) == 0:
+        # make sure class_name exists
+        if not class_name:
             print("** class name missing **")
             return
-        # make sure class_name exists in classes
+
         elif class_name not in HBNBCommand.classes:
             print("** class doesn't exist **")
             return
@@ -330,11 +329,11 @@ class HBNBCommand(cmd.Cmd):
 
         # search list for '='
         for p in params[1:]:
-            if "=" not in p:
+            if "=" not in params:
                 continue
 
             # split key and value into seprate parameters
-            key, value = p.split("=")
+            key, value = params[p].split("=")
             key = key.strip()
             value = value.strip('"')
 
@@ -368,9 +367,10 @@ class HBNBCommand(cmd.Cmd):
         # save it, print it, and save again
         try:
             new_instance = HBNBCommand.classes[class_name](**kwargs)
+            storage.save()
             new_instance.save()
             print(new_instance.id)
-            print(new_instance)
+            storage.save()
         # broad exception that should cover most
         except Exception as e:
             print(f"exceptinon error: {e}")

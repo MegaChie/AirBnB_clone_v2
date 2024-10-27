@@ -9,6 +9,8 @@ class FileStorage:
     __file_path = 'file.json'
     __objects = {}
 
+    # ---------------------
+    # added cls if object of specific class is given
     def all(self, cls=None):
         """Returns a dictionary of models currently in storage"""
         if cls is None:
@@ -16,12 +18,15 @@ class FileStorage:
         else:
             cls_objects = {key: value for key, value in FileStorage.__objects.items() if isinstance(value, cls)}
             return cls_objects
+    # ----------------------
 
+    # ------------------------
     def new(self, obj):
         """Adds new object to storage dictionary"""
         if obj is not None:
             key = f"{obj.__class__.__name__}.{obj.id}"
             FileStorage.__objects[key] = obj
+    # -------------------------
 
     def save(self):
         """Saves storage dictionary to file"""
@@ -32,6 +37,7 @@ class FileStorage:
                 temp[key] = val.to_dict()
             json.dump(temp, f)
 
+    # ---------------------------
     def reload(self):
         """Loads storage dictionary from file"""
         from models.base_model import BaseModel
@@ -56,15 +62,18 @@ class FileStorage:
                     FileStorage.__objects[key] = obj
         except FileNotFoundError:
             pass
+        # ------------------------------------
 
+    # -------------------------------
     def delete(self, obj=None):
-        """Deletes an obj if there is one from __objects"""
+        """ deletes an obj if there is one from __objects"""
         if obj is not None:
-            key = f"{obj.__class__.__name__}.{obj.id}"
+            key = str(obj)
             if key in FileStorage.__objects:
                 del FileStorage.__objects[key]
-                print(f"Deleted {key}")
+                print(f"deleted {key}")
             else:
-                print(f"{key} doesn't exist in FileStorage")
+                print(f"{str(obj)} doesn't exist in filestorage")
         else:
-            print("Can't delete object")
+            print("can't delete  onject")
+    # -------------------------------------
