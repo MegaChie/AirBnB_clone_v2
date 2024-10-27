@@ -10,6 +10,7 @@ from models.state import State
 from models.city import City
 from models.amenity import Amenity
 from models.review import Review
+from models.engine.file_storage import FileStorage
 import json
 
 
@@ -367,10 +368,8 @@ class HBNBCommand(cmd.Cmd):
         # save it, print it, and save again
         try:
             new_instance = HBNBCommand.classes[class_name](**kwargs)
-            storage.save()
             new_instance.save()
             print(new_instance.id)
-            storage.save()
         # broad exception that should cover most
         except Exception as e:
             print(f"exceptinon error: {e}")
