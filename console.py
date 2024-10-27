@@ -316,11 +316,11 @@ class HBNBCommand(cmd.Cmd):
         params = args.split()
         class_name = params[0]
 
-        # make sure class_name exists
-        if not class_name:
+        # make sure class_name provided
+        if len(params) == 0:
             print("** class name missing **")
             return
-
+        # make sure class_name exists in classes
         elif class_name not in HBNBCommand.classes:
             print("** class doesn't exist **")
             return
@@ -330,11 +330,11 @@ class HBNBCommand(cmd.Cmd):
 
         # search list for '='
         for p in params[1:]:
-            if "=" not in params:
+            if "=" not in p:
                 continue
 
             # split key and value into seprate parameters
-            key, value = params[p].split("=")
+            key, value = p.split("=")
             key = key.strip()
             value = value.strip('"')
 
