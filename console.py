@@ -175,7 +175,7 @@ class HBNBCommand(cmd.Cmd):
         key = c_name + "." + c_id
 
         try:
-            del(storage.all()[key])
+            del (storage.all()[key])
             storage.save()
         except KeyError:
             print("** no instance found **")
@@ -319,11 +319,11 @@ class HBNBCommand(cmd.Cmd):
         if not class_name:
             print("** class name missing **")
             return
-        
+
         elif class_name not in HBNBCommand.classes:
             print("** class doesn't exist **")
             return
-        
+
         # empty dictionary
         kwargs = {}
 
@@ -331,7 +331,7 @@ class HBNBCommand(cmd.Cmd):
         for p in params[1:]:
             if "=" not in params:
                 continue
-        
+
             # split key and value into seprate parameters
             key, value = params[p].split("=")
             key = key.strip()
@@ -342,7 +342,8 @@ class HBNBCommand(cmd.Cmd):
                 try:
                     value = HBNBCommand.types[key](value)
                 except ValueError:
-                    print("** value must be a valid {} **".format(HBNBCommand.types[key].__name__))
+                    print("""** value must be a valid {} **"""
+                          .format(HBNBCommand.types[key].__name__))
                     return
             # remove the first and last " if it starts and ends with
             # replace _ and \\
@@ -362,7 +363,8 @@ class HBNBCommand(cmd.Cmd):
                     continue
             # assign the value to the correct keyword
             kwargs[key] = value
-        # create a new instance of this class, save it, print it, and save again
+        # create a new instance of this class
+        # save it, print it, and save again
         try:
             new_instance = HBNBCommand.classes[class_name](**kwargs)
             storage.save()
@@ -374,7 +376,6 @@ class HBNBCommand(cmd.Cmd):
             print(f"exceptinon error: {e}")
             return
         # -----------------------------
-
 
 if __name__ == "__main__":
     HBNBCommand().cmdloop()
