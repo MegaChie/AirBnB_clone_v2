@@ -11,6 +11,9 @@ from models.city import City
 from models.amenity import Amenity
 from models.review import Review
 import json
+from models import storage
+from models.engine.file_storage import FileStorage
+from models.engine.db_storage import DBStorage
 
 
 class HBNBCommand(cmd.Cmd):
