@@ -14,20 +14,29 @@ class HBNBCommand(cmd.Cmd):
     """ HBNB console """
     prompt = '(hbnb) '
 
+    # commands for console
+
+    # create class
     def do_create(self, arg):
         """ Create a new instance of a class """
+        # split args at space
         args = arg.split()
         if not args:
             print("** class name missing **")
             return
+    # class name is index 0
         class_name = args[0]
         if class_name not in globals():
             print("** class doesn't exist **")
             return
+        # instance of class name
         new_instance = globals()[class_name]()
+        # iterate through args starting at index 1
         for param in args[1:]:
+            # split at =, and strip, give assign key and value
             key, value = param.split('=')
             setattr(new_instance, key, value.strip('"').replace('_', ' '))
+        # save and print
         new_instance.save()
         print(new_instance.id)
 
@@ -55,14 +64,17 @@ class HBNBCommand(cmd.Cmd):
     def do_all(self, arg):
         """ Show all instances of a class """
         args = arg.split()
+        # if its not in args then show all
         if not args:
             instances = storage.all()
         else:
+            # if is in args show all that class
             class_name = args[0]
             if class_name not in globals():
                 print("** class doesn't exist **")
                 return
             instances = storage.all(globals()[class_name])
+        # print instances
         for instance in instances.values():
             print(instance)
 
