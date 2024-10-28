@@ -1,0 +1,5 @@
+USE hbnb_dev_db;
+CREATE TABLE IF NOT EXISTS states (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(128) NOT NULL
+);
