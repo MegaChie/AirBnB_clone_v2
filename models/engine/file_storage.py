@@ -3,7 +3,7 @@
 import json
 from models.base_model import BaseModel
 from models.user import User
-from models.state import State  # Ensure State is imported
+from models.state import State
 from models.city import City
 from models.amenity import Amenity
 from models.place import Place
@@ -51,6 +51,7 @@ class FileStorage:
     def reload(self):
         """Loads storage dictionary from file"""
         try:
+            # open file, load it, and put it in storage
             with open(self.__file_path, 'r') as f:
                 data = json.load(f)
                 for key, value in data.items():
