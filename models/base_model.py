@@ -18,6 +18,7 @@ class BaseModel:
     # -------------------------------------
     def __init__(self, *args, **kwargs):
         """Instatntiates a new model"""
+        # if not in kwargs then create instance of it
         if not kwargs:
             from models import storage
             self.id = str(uuid.uuid4())
