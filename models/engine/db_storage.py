@@ -51,7 +51,7 @@ class DBStorage:
 		# if cls, query that class
         if cls:
             query = self.__session.query(cls).all()
-            print(f"Querying {cls.__name__}: {query}")  # Debugging statement
+            # assign key to object
             for obj in query:
                 key = f"{obj.__class__.__name__}.{obj.id}"
                 objects[key] = obj
@@ -59,27 +59,23 @@ class DBStorage:
             # query all classes
             for cls in classes:
                 query = self.__session.query(cls).all()
-                print(f"Querying {cls.__name__}: {query}")  # Debugging statement
+                # assign key to object
                 for obj in query:
                     key = f"{obj.__class__.__name__}.{obj.id}"
                     objects[key] = obj
-        print(f"All objects: {objects}")  # Debugging statement
         return objects
 
     def new(self, obj):
         """ Add a new object to the database """
-        print(f"Adding new object: {obj}")  # Debugging statement
         self.__session.add(obj)
 
     def save(self):
         """ Commit changes to the database """
-        print("Committing changes to the database")  # Debugging statement
         self.__session.commit()
 
     def delete(self, obj=None):
         """ Delete an object from the database """
         if obj:
-            print(f"Deleting object: {obj}")  # Debugging statement
             self.__session.delete(obj)
 
     def reload(self):
@@ -92,7 +88,6 @@ class DBStorage:
         from models.review import Review
         from models.city import City
 
-        print("Reloading the database")  # Debugging statement
         # create tables
         Base.metadata.create_all(self.__engine)
         # create session, use scoped session for safety
