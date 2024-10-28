@@ -19,7 +19,7 @@ class State(BaseModel, Base):
     cities = relationship("City", backref="state", cascade="all, delete, delete-orphan")
 
     @property
-    def cities(self):
+    def cities_list(self):
         """ getter attribute cities that returns the list of City instances """
         # if storage is db then just return cities
         # else return all cities with state id
