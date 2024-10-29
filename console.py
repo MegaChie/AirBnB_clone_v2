@@ -1,47 +1,59 @@
 #!/usr/bin/python3
 """ Console Module """
 import cmd
-from models import storage
 from models.base_model import BaseModel
 from models.user import User
-from models.state import State
+from models.place import Place
 from models.city import City
 from models.amenity import Amenity
-from models.place import Place
 from models.review import Review
+from models.state import State
 
 class HBNBCommand(cmd.Cmd):
     """ HBNB console """
     prompt = '(hbnb) '
 
+    classes = {
+        'BaseModel': BaseModel,
+        'User': User,
+        'Place': Place,
+        'City': City,
+        'Amenity': Amenity,
+        'Review': Review,
+        'State': State
+    }
+
     # commands for console
 
     # create class
     def do_create(self, arg):
-        """ Create a new instance of a class """
-        # split args at space
-        print("do_create called with arg:", arg)  # Debug print
+        """Creates a new instance of BaseModel, saves it (to the JSON file) and prints the id"""
         args = arg.split()
         if not args:
             print("** class name missing **")
             return
-    # class name is index 0
         class_name = args[0]
-        if class_name not in globals():
+        if class_name not in HBNBCommand.classes:
             print("** class doesn't exist **")
             return
-        # instance of class name
-        new_instance = globals()[class_name]()
-        # iterate through args starting at index 1
+        new_instance = HBNBCommand.classes[class_name]()
         for param in args[1:]:
-            # split at =, and strip, give assign key and value
-            print("Processing param:", param)  # Debug print
-            if '=' not in param:
-                print("Invalid parameter format:", param)  # Debug print
-                continue
-            key, value = param.split('=')
-            setattr(new_instance, key, value.strip('"').replace('_', ' '))
-        # save and print
+            key_value = param.split("=")
+            if len(key_value) == 2:
+                key, value = key_value
+                if value.startswith('"') and value.endswith('"'):
+                    value = value[1:-1].replace('_', ' ').replace('\\"', '"')
+                elif '.' in value:
+                    try:
+                        value = float(value)
+                    except ValueError:
+                        continue
+                else:
+                    try:
+                        value = int(value)
+                    except ValueError:
+                        continue
+                setattr(new_instance, key, value)
         new_instance.save()
         print(new_instance.id)
 
