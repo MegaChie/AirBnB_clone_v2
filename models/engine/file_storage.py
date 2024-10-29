@@ -25,7 +25,8 @@ class FileStorage:
             return FileStorage.__objects
         # if cls show all objects of that class
         else:
-            cls_objects = {key: value for key, value in FileStorage.__objects.items()
+            cls_objects = {key: value for key, value
+                           in FileStorage.__objects.items()
                            if isinstance(value, cls)}
             return cls_objects
     # ----------------------
