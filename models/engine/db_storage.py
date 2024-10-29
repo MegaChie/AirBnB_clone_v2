@@ -28,8 +28,8 @@ class DBStorage:
         env = os.getenv('HBNB_ENV')
 
         # create engine
-        self.__engine = create_engine(f'mysql+mysqldb://{user}: 
-                                      {password}@{host}/{db}',
+        self.__engine = create_engine(f'mysql+mysqldb://{user}:
+                                       {password}@{host}/{db}',
                                       pool_pre_ping=True)
 
         # if test env, then drop tables
@@ -92,7 +92,7 @@ class DBStorage:
         from models.city import City
 
         # create tables
-		# Base.metadata.create_all(self.__engine)
+        # Base.metadata.create_all(self.__engine)
         # create session, use scoped session for safety
         session_factory = sessionmaker(bind=self.__engine,
                                        expire_on_commit=False)
