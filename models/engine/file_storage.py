@@ -9,6 +9,7 @@ from models.amenity import Amenity
 from models.place import Place
 from models.review import Review
 
+
 class FileStorage:
     """This class manages storage of hbnb models in JSON format"""
     # path to json file
@@ -24,7 +25,8 @@ class FileStorage:
             return FileStorage.__objects
         # if cls show all objects of that class
         else:
-            cls_objects = {key: value for key, value in FileStorage.__objects.items() if isinstance(value, cls)}
+            cls_objects = {key: value for key, value in FileStorage.__objects.items()
+                           if isinstance(value, cls)}
             return cls_objects
     # ----------------------
 
