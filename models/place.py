@@ -4,6 +4,7 @@ from sqlalchemy.orm import relationship
 from models.base_model import BaseModel, Base
 from models.review import Review
 
+
 class Place(BaseModel, Base):
     """ The place class, contains various attributes """
     __tablename__ = 'places'
@@ -21,7 +22,9 @@ class Place(BaseModel, Base):
 
     # if storage is db use relationship
     if os.getenv('HBNB_TYPE_STORAGE') == 'db':
-        reviews = relationship('Review', backref='place', cascade='all, delete', foreign_keys='Review.place_id')
+        reviews = relationship('Review', backref='place',
+                               cascade='all, delete', 
+                               oreign_keys='Review.place_id')
     else:
         # else use getter
         @property
