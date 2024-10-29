@@ -20,6 +20,7 @@ class HBNBCommand(cmd.Cmd):
     def do_create(self, arg):
         """ Create a new instance of a class """
         # split args at space
+        print("do_create called with arg:", arg)  # Debug print
         args = arg.split()
         if not args:
             print("** class name missing **")
@@ -34,6 +35,10 @@ class HBNBCommand(cmd.Cmd):
         # iterate through args starting at index 1
         for param in args[1:]:
             # split at =, and strip, give assign key and value
+            print("Processing param:", param)  # Debug print
+            if '=' not in param:
+                print("Invalid parameter format:", param)  # Debug print
+                continue
             key, value = param.split('=')
             setattr(new_instance, key, value.strip('"').replace('_', ' '))
         # save and print
