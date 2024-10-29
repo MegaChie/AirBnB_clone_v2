@@ -10,6 +10,7 @@ from models.review import Review
 from models.state import State
 from models import storage
 
+
 class HBNBCommand(cmd.Cmd):
     """ HBNB console """
     prompt = '(hbnb) '
@@ -28,7 +29,7 @@ class HBNBCommand(cmd.Cmd):
     # commands for console
     # create class
     def do_create(self, arg):
-        """Creates a new instance of BaseModel, saves it (to the JSON file) and prints the id"""
+        """Creates a new instance """
         # split args at space
         args = arg.split()
         if not args:
@@ -46,7 +47,8 @@ class HBNBCommand(cmd.Cmd):
         for param in args[1:]:
             # split at equals
             key_value = param.split("=")
-            # tuple, if exactly 2, key gets first element, value gets 2nd element
+            # tuple, if exactly 2, key gets first element
+            # value gets 2nd element
             if len(key_value) == 2:
                 key, value = key_value
                 # replace underscore with space
@@ -168,6 +170,7 @@ class HBNBCommand(cmd.Cmd):
     def do_quit(self, arg):
         """ Handle quit to exit the console """
         return True
+
 
 if __name__ == '__main__':
     HBNBCommand().cmdloop()
