@@ -23,7 +23,7 @@ class Place(BaseModel, Base):
     # if storage is db use relationship
     if os.getenv('HBNB_TYPE_STORAGE') == 'db':
         reviews = relationship('Review', backref='place',
-                               cascade='all, delete', 
+                               cascade='all, delete',
                                oreign_keys='Review.place_id')
     else:
         # else use getter
