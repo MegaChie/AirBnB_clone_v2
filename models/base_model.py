@@ -8,10 +8,12 @@ from sqlalchemy import Column, String, DateTime
 
 Base = declarative_base()
 
+
 class BaseModel:
     """A base class for all hbnb models"""
     # added id, created at, updated at
-    id = Column(String(60), primary_key=True, nullable=False, unique=True, index=True, default=lambda: str(uuid.uuid4()))
+    id = Column(String(60), primary_key=True, nullable=False,
+                unique=True, index=True, default=lambda: str(uuid.uuid4()))
     created_at = Column(DateTime, nullable=False, default=datetime.now())
     updated_at = Column(DateTime, nullable=False, default=datetime.now())
 
