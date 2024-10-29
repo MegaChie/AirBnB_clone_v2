@@ -8,11 +8,13 @@ from models.city import City
 from models.amenity import Amenity
 from models.review import Review
 from models.state import State
+from models import storage
 
 class HBNBCommand(cmd.Cmd):
     """ HBNB console """
     prompt = '(hbnb) '
 
+    # console classes
     classes = {
         'BaseModel': BaseModel,
         'User': User,
@@ -24,25 +26,34 @@ class HBNBCommand(cmd.Cmd):
     }
 
     # commands for console
-
     # create class
     def do_create(self, arg):
         """Creates a new instance of BaseModel, saves it (to the JSON file) and prints the id"""
+        # split args at space
         args = arg.split()
         if not args:
             print("** class name missing **")
             return
+        # class name will be element 0
         class_name = args[0]
+        # check if class exists
         if class_name not in HBNBCommand.classes:
             print("** class doesn't exist **")
             return
+        # new instance class name
         new_instance = HBNBCommand.classes[class_name]()
+        # iterate through args
         for param in args[1:]:
+            # split at equals
             key_value = param.split("=")
+            # tuple, if exactly 2, key gets first element, value gets 2nd element
             if len(key_value) == 2:
                 key, value = key_value
+                # replace underscore with space
                 if value.startswith('"') and value.endswith('"'):
+                    # remove qutes
                     value = value[1:-1].replace('_', ' ').replace('\\"', '"')
+                    # check if is in or float
                 elif '.' in value:
                     try:
                         value = float(value)
@@ -53,7 +64,9 @@ class HBNBCommand(cmd.Cmd):
                         value = int(value)
                     except ValueError:
                         continue
+                    # set attr of instance
                 setattr(new_instance, key, value)
+                # save and print
         new_instance.save()
         print(new_instance.id)
 
