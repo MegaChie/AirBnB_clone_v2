@@ -28,7 +28,7 @@ class DBStorage:
         env = os.getenv('HBNB_ENV')
 
         # create engine
-        self.__engine = create_engine(f'mysql+mysqldb://{user}:
+        self.__engine = create_engine(f'mysql+mysqldb://{user}: 
                                       {password}@{host}/{db}',
                                       pool_pre_ping=True)
 
@@ -45,13 +45,13 @@ class DBStorage:
         from models.place import Place
         from models.review import Review
         from models.amenity import Amenity
-        
-		# classes to query
+
+        # classes to query
         classes = [User, State, City, Amenity, Place, Review]
         # dict to store objects
-		# objects = {}
-        
-		# if cls, query that class
+        # objects = {}
+
+        # if cls, query that class
         if cls:
             query = self.__session.query(cls).all()
             # assign key to object
