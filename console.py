@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 """ Console Module """
 import cmd
-from models.base_model import BaseModel
+from models.base_model import BaseModel, Base
 from models.user import User
 from models.place import Place
 from models.city import City
