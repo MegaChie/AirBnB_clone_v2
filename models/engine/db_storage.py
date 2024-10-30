@@ -44,11 +44,10 @@ class DBStorage:
         from models.place import Place
         from models.review import Review
         from models.amenity import Amenity
-
+    
+        objects = {}
         # classes to query
         classes = [User, State, City, Amenity, Place, Review]
-        # dict to store objects
-        # objects = {}
 
         # if cls, query that class
         if cls:
