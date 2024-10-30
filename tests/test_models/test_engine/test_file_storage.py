@@ -1,109 +1,100 @@
 #!/usr/bin/python3
-""" Module for testing file storage"""
+"""
+This module contains tests for the DBStorage class.
+"""
 import unittest
-from models.base_model import BaseModel
-from models import storage
+from unittest.mock import patch
+from models.engine.db_storage import DBStorage
+from models.user import User
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy import create_engine
 import os
 
 
-class test_fileStorage(unittest.TestCase):
-    """ Class to test the file storage method """
+class test_DBStorage(unittest.TestCase):
+    """
+    Tests the DBStorage class
+    """
 
-    def setUp(self):
-        """ Set up test environment """
-        del_list = []
-        for key in storage._FileStorage__objects.keys():
-            del_list.append(key)
-        for key in del_list:
-            del storage._FileStorage__objects[key]
+    @classmethod
+    def setUpClass(cls):
+        """
+        Set up for tests
+        """
+        os.environ["HBNB_ENV"] = "test"
+        os.environ["HBNB_MYSQL_USER"] = "hbnb_test"
+        os.environ["HBNB_MYSQL_PWD"] = "hbnb_test_pwd"
+        os.environ["HBNB_MYSQL_HOST"] = "localhost"
+        os.environ["HBNB_MYSQL_DB"] = "hbnb_test_db"
 
-    def tearDown(self):
-        """ Remove storage file at end of tests """
-        try:
-            os.remove('file.json')
-        except:
-            pass
+        cls.storage = DBStorage()
+        cls.storage.reload()
+        cls.session = cls.storage._DBStorage__session
 
-    def test_obj_list_empty(self):
-        """ __objects is initially empty """
-        self.assertEqual(len(storage.all()), 0)
-
-    def test_new(self):
-        """ New object is correctly added to __objects """
-        new = BaseModel()
-        for obj in storage.all().values():
-            temp = obj
-        self.assertTrue(temp is obj)
+    @classmethod
+    def tearDownClass(cls):
+        """
+        Cleans up post-test
+        """
+        cls.session.close()
+        del os.environ["HBNB_ENV"]
+        del os.environ["HBNB_MYSQL_USER"]
+        del os.environ["HBNB_MYSQL_PWD"]
+        del os.environ["HBNB_MYSQL_HOST"]
+        del os.environ["HBNB_MYSQL_DB"]
 
     def test_all(self):
-        """ __objects is properly returned """
-        new = BaseModel()
-        temp = storage.all()
-        self.assertIsInstance(temp, dict)
+        """
+        Tests if all() returns __objects
+        """
+        obj = self.storage.all()
+        self.assertIsInstance(obj, dict)
 
-    def test_base_model_instantiation(self):
-        """ File is not created on BaseModel save """
-        new = BaseModel()
-        self.assertFalse(os.path.exists('file.json'))
-
-    def test_empty(self):
-        """ Data is saved to file """
-        new = BaseModel()
-        thing = new.to_dict()
-        new.save()
-        new2 = BaseModel(**thing)
-        self.assertNotEqual(os.path.getsize('file.json'), 0)
+    def test_new(self):
+        """
+        Tests if new() adds an object to __objects
+        """
+        user = User(email="new_test@hbnb.com", password="test_pwd")
+        self.storage.new(user)
+        self.assertIn(user, self.session.new)
 
     def test_save(self):
-        """ FileStorage save method """
-        new = BaseModel()
-        storage.save()
-        self.assertTrue(os.path.exists('file.json'))
+        """
+        Tests if save() commits changes to the database
+        """
+        user = User(email="save_test@hbnb.com", password="test_pwd")
+        self.storage.new(user)
+        self.storage.save()
+
+        self.session.commit()
+        self.session.close()
+
+        self.session = self.storage._DBStorage__session
+        saved_user = self.session.query(User).filter_by(id=user.id).first()
+
+        self.assertIsNotNone(saved_user)
+        self.assertEqual(saved_user.email, "save_test@hbnb.com")
+
+    def test_delete(self):
+        """
+        Tests if delete() deletes an object from __objects
+        """
+        user = User(email="delete_test@hbnb.com", password="test_pwd")
+        self.storage.new(user)
+        self.storage.save()
+        self.storage.delete(user)
+        self.storage.save()
+        obj_dict = self.storage.all("User")
+        self.assertNotIn(f"User.{user.id}", obj_dict)
 
     def test_reload(self):
-        """ Storage file is successfully loaded to __objects """
-        new = BaseModel()
-        storage.save()
-        storage.reload()
-        for obj in storage.all().values():
-            loaded = obj
-        self.assertEqual(new.to_dict()['id'], loaded.to_dict()['id'])
+        """
+        Tests if reload() loads objects from the database
+        """
+        self.storage.reload()
+        obj_dict = self.storage.all()
+        self.assertIsInstance(obj_dict, dict)
 
-    def test_reload_empty(self):
-        """ Load from an empty file """
-        with open('file.json', 'w') as f:
-            pass
-        with self.assertRaises(ValueError):
-            storage.reload()
 
-    def test_reload_from_nonexistent(self):
-        """ Nothing happens if file does not exist """
-        self.assertEqual(storage.reload(), None)
-
-    def test_base_model_save(self):
-        """ BaseModel save method calls storage save """
-        new = BaseModel()
-        new.save()
-        self.assertTrue(os.path.exists('file.json'))
-
-    def test_type_path(self):
-        """ Confirm __file_path is string """
-        self.assertEqual(type(storage._FileStorage__file_path), str)
-
-    def test_type_objects(self):
-        """ Confirm __objects is a dict """
-        self.assertEqual(type(storage.all()), dict)
-
-    def test_key_format(self):
-        """ Key is properly formatted """
-        new = BaseModel()
-        _id = new.to_dict()['id']
-        for key in storage.all().keys():
-            temp = key
-        self.assertEqual(temp, 'BaseModel' + '.' + _id)
-
-    def test_storage_var_created(self):
-        """ FileStorage object storage created """
-        from models.engine.file_storage import FileStorage
-        print(type(storage))
-        self.assertEqual(type(storage), FileStorage)
+if __name__ == "__main__":
+    unittest.main()
