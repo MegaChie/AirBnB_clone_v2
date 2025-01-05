@@ -1,0 +1,63 @@
+{
+  "State.05fc1abe-37c3-4eb9-8383-05ce1ea90f3d": {
+    "id": "05fc1abe-37c3-4eb9-8383-05ce1ea90f3d",
+    "created_at": "2024-12-30T05:05:23.123160",
+    "updated_at": "2024-12-30T05:05:23.123198",
+    "name": "California",
+    "__class__": "State"
+  },
+  "State.7c521f60-391d-4668-841f-4d5004ab2d19": {
+    "id": "7c521f60-391d-4668-841f-4d5004ab2d19",
+    "created_at": "2024-12-30T05:08:32.152835",
+    "updated_at": "2024-12-30T05:08:32.152873",
+    "name": "Arizona",
+    "__class__": "State"
+  },
+  "Place.fdb73a6e-3bb6-4268-b167-61a38487cef0": {
+    "id": "fdb73a6e-3bb6-4268-b167-61a38487cef0",
+    "created_at": "2024-12-30T05:09:06.736230",
+    "updated_at": "2024-12-30T05:09:06.736269",
+    "city_id": "0001",
+    "user_id": "0001",
+    "name": "My little house",
+    "number_rooms": 4,
+    "number_bathrooms": 2,
+    "max_guest": 10,
+    "price_by_night": 300,
+    "latitude": 37.773972,
+    "longitude": -122.431297,
+    "__class__": "Place"
+  },
+  "City.5271c977-9c5a-4fe3-b76c-503e162c8cce": {
+    "id": "5271c977-9c5a-4fe3-b76c-503e162c8cce",
+    "created_at": "2024-12-30T05:17:54.599979",
+    "updated_at": "2024-12-30T05:17:54.600016",
+    "name": "Texas",
+    "__class__": "City"
+  },
+  "User.65c461ac-488d-4d37-9196-a08a3a11c230": {
+    "id": "65c461ac-488d-4d37-9196-a08a3a11c230",
+    "created_at": "2024-12-30T05:17:54.600438",
+    "updated_at": "2024-12-30T05:17:54.600454",
+    "name": "James",
+    "age": 17,
+    "height": 5.9,
+    "__class__": "User"
+  },
+  "City.454652c0-fb9f-491d-ae33-ad0e6c7e1cd7": {
+    "id": "454652c0-fb9f-491d-ae33-ad0e6c7e1cd7",
+    "created_at": "2024-12-30T05:25:31.100448",
+    "updated_at": "2024-12-30T05:25:31.100487",
+    "name": "Texas",
+    "__class__": "City"
+  },
+  "User.258da86d-d5cb-40ea-9c7c-9db86e11ca1e": {
+    "id": "258da86d-d5cb-40ea-9c7c-9db86e11ca1e",
+    "created_at": "2024-12-30T05:25:31.100934",
+    "updated_at": "2024-12-30T05:25:31.100954",
+    "name": "James",
+    "age": 17,
+    "height": 5.9,
+    "__class__": "User"
+  }
+}
