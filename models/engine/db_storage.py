@@ -14,6 +14,7 @@ from models.user import User
 
 class DBStorage:
     """This class manages storage of hbnb models in a SQL database."""
+
     __engine = None
     __session = None
 
