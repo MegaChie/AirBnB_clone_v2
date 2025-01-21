@@ -1,8 +1,6 @@
--- This files prepare Mysql server
--- for the project
-CREATE DATABASE hbnb_dev_db IF NOT EXISTS;
-CREATE USER "hbnb_dev"@"localhost" IDENTIFIED BY "hbnb_dev_pwd" IF NOT EXISTS;
-GRANT ALL PRIVILEGES ON hbnb_dev_db.* TO hbnb_dev;
+-- This file prepares MySQL server for the project
+CREATE DATABASE IF NOT EXISTS hbnb_dev_db;
+CREATE USER IF NOT EXISTS 'hbnb_dev'@'localhost' IDENTIFIED BY 'hbnb_dev_pwd';
+GRANT ALL PRIVILEGES ON hbnb_dev_db.* TO 'hbnb_dev'@'localhost';
+GRANT SELECT ON performance_schema.* TO 'hbnb_dev'@'localhost';
 FLUSH PRIVILEGES;
-CREATE DATABASE performance_schema;
-GRANT SELECT PRIVILEGE ON performance_schema.* TO hbnb_dev;
