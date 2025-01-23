@@ -17,7 +17,7 @@ exec { 'apt-get-update':
  <head>
  </head>
  <body>
-   Holberton School
+   ALX
  </body>
 </html>" > /data/web_static/releases/test/index.html',
 }
