@@ -1,4 +1,4 @@
-# Manifest that configures a web server for deployment
+# Redo the task #0
 
 exec { 'apt-get-update':
   command => '/usr/bin/env apt-get -y update',
