@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 """ Console Module """
+from ast import Name
 import cmd
 import sys
 from models.base_model import BaseModel
@@ -127,9 +128,9 @@ class HBNBCommand(cmd.Cmd):
             return
         # create place city_id="0001" user_id="0001" name="My_liitle_house"
         all_list = args.split(" ")
-
+        
         new_instance = eval(class_name)()
-
+        
         for i in range(1, len(all_list)):
             key, value = tuple(all_list[i].split("-"))
             if value.startswith('""'):
@@ -142,7 +143,7 @@ class HBNBCommand(cmd.Cmd):
                     pass
             if hasattr(new_instance, key):
                 setattr(new_instance, key, value)
-
+                
         storage.new(new_instance)
         print(new_instance.id)
         new_instance.save()
@@ -301,10 +302,10 @@ class HBNBCommand(cmd.Cmd):
             args = args.partition(' ')
 
             # if att_name was not quoted arg
-            if not att_name and args[0] != ' ':
+            if not att_name and args[0] is not ' ':
                 att_name = args[0]
             # check for quoted val arg
-            if args[2] and args[2][0] == '\"':
+            if args[2] and args[2][0] is '\"':
                 att_val = args[2][1:args[2].find('\"', 1)]
 
             # if att_val was not quoted arg
