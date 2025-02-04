@@ -8,7 +8,7 @@ fs = FileStorage()
 
 # All States
 all_states = fs.all(State)
-print(f"All States: {len(all_states.keys())}")
+print("All States: {}".format(len(all_states.keys())))
 for state_key in all_states.keys():
     print(all_states[state_key])
 
@@ -17,11 +17,11 @@ new_state = State()
 new_state.name = "California"
 fs.new(new_state)
 fs.save()
-print(f"New State: {new_state}")
+print("New State: {}".format(new_state))
 
 # All States
 all_states = fs.all(State)
-print(f"All States: {len(all_states.keys())}")
+print("All States: {}".format(len(all_states.keys())))
 for state_key in all_states.keys():
     print(all_states[state_key])
 
@@ -30,19 +30,19 @@ another_state = State()
 another_state.name = "Nevada"
 fs.new(another_state)
 fs.save()
-print(f"Another State: {another_state}")
+print("Another State: {}".format(another_state))
 
 # All States
 all_states = fs.all(State)
-print(f"All States: {len(all_states.keys())}")
+print("All States: {}".format(len(all_states.keys())))
 for state_key in all_states.keys():
-    print(all_states[state_key])        
+    print(all_states[state_key])
 
 # Delete the new State
 fs.delete(new_state)
 
 # All States
 all_states = fs.all(State)
-print(f"All States: {len(all_states.keys())}")
+print("All States: {}".format(len(all_states.keys())))
 for state_key in all_states.keys():
     print(all_states[state_key])
