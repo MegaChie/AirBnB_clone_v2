@@ -1,4 +1,8 @@
 #!/usr/bin/python3
+"""
+   Simple flask app
+
+"""
 
 from web_flask import create_app
 
