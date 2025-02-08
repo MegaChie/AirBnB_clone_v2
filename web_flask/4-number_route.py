@@ -32,7 +32,7 @@ def python_text(text="is cool"):
 @app.route('/number/<n>', strict_slashes=False)
 def display_n(n):
     """ display n is number when n is integer """
-    if isinstance(n, int):
+    if n.isdigit():
         return f"{n} is a number"
 
 if __name__ == "__main__":
