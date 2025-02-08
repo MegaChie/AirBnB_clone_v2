@@ -30,7 +30,7 @@ def python_text(text="is cool"):
     return f"Python {text.replace('_', ' ')}"
 
 @app.route('/number/<n>', strict_slashes=False)
-def display_n():
+def display_n(n):
     """ display n is number when n is integer """
     if isinstance(n, int):
         return f"{n} is a number"
