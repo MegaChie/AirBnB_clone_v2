@@ -29,11 +29,10 @@ def python_text(text="is cool"):
     """ display Python followed by text """
     return f"Python {text.replace('_', ' ')}"
 
-@app.route('/number/<n>', strict_slashes=False)
+@app.route('/number/<int:n>', strict_slashes=False)
 def display_n(n):
     """ display n is number when n is integer """
-    if n.isdigit():
-        return f"{n} is a number"
+    return f"{n} is a number"
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
