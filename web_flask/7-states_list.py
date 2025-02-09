@@ -17,12 +17,7 @@ def states_list():
 
 @app.teardown_appcontext
 def teardown(exception):
-    """
-    Close the storage on teardown
-
-    Args:
-        exception: Any exception that occurred during the request handling.
-    """
+    """Close the storage on teardown"""
     storage.close()
 
 
