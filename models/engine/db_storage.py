@@ -1,5 +1,7 @@
 #!/usr/bin/python3
-"""This module defines a class to manage file storage for hbnb clone"""
+"""
+Contains the class DBStorage
+"""
 
 import models
 from models.amenity import Amenity
@@ -19,12 +21,12 @@ classes = {"Amenity": Amenity, "City": City,
 
 
 class DBStorage:
-    """This class manages storage for hbnb clone"""
+    """interaacts with the MySQL database"""
     __engine = None
     __session = None
 
     def __init__(self):
-        """Create the storage engine"""
+        """Instantiate a DBStorage object"""
         HBNB_MYSQL_USER = getenv('HBNB_MYSQL_USER')
         HBNB_MYSQL_PWD = getenv('HBNB_MYSQL_PWD')
         HBNB_MYSQL_HOST = getenv('HBNB_MYSQL_HOST')
