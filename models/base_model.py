@@ -70,3 +70,9 @@ class BaseModel:
                     return_dict[key] = value
 
         return return_dict
+
+    def delete(self):
+        """delete the current instance from the storage"""
+        from models import storage
+
+        storage.delete(self)  # updates
