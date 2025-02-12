@@ -10,7 +10,7 @@ from models.base_model import BaseModel
 
 @unittest.skipIf(os.getenv("HBNB_TYPE_STORAGE") == "db",
                  "Skipping: not using DBStorage")
-class test_basemodel(unittest.TestCase):
+class TestBaseModel(unittest.TestCase):
     """ """
 
     def __init__(self, *args, **kwargs):
@@ -25,6 +25,7 @@ class test_basemodel(unittest.TestCase):
             os.remove('file.json')
 
     def tearDown(self):
+        """Clean up the test file after each test."""
         try:
             os.remove('file.json')
         except FileNotFoundError as e:
