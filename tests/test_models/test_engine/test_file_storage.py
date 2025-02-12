@@ -35,7 +35,7 @@ class BaseTestFileStorage(unittest.TestCase):
         """ Remove storage file at end of tests """
         try:
             os.remove(self.__file)
-        except:
+        except FileNotFoundError:
             pass
 
     def test_obj_list_empty(self):
