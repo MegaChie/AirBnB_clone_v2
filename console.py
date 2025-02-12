@@ -218,7 +218,7 @@ class HBNBCommand(cmd.Cmd):
         print("[Usage]: show <className> <objectId>\n")
 
     def do_destroy(self, args):
-        """ Destroys a specified object"""
+        """Destroy a specified object."""
         new = args.partition(" ")
         c_name = new[0]
         c_id = new[2]
@@ -269,24 +269,27 @@ class HBNBCommand(cmd.Cmd):
         print(print_list)
 
     def help_all(self):
-        """Help information for the all command"""
+        """Help information for the all command."""
         print("Shows all objects, or all of a class")
         print("[Usage]: all <className>\n")
 
     def do_count(self, args):
-        """Count current number of class instances"""
+        """Count current number of class instances."""
+        storage.reload()  # added Explicitly reload storage
+
         count = 0
-        for k, v in storage._FileStorage__objects.items():
+        for k, v in storage.all().items():
             if args == k.split('.')[0]:
                 count += 1
+
         print(count)
 
     def help_count(self):
-        """ """
+        """Help information for the count command."""
         print("Usage: count <class_name>")
 
     def do_update(self, args):
-        """ Updates a certain object with new info"""
+        """Update a certain object with new info."""
         c_name = c_id = att_name = att_val = kwargs = ''
 
         # isolate cls from id/args, ex: (<cls>, delim, <id/args>)
