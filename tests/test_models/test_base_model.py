@@ -1,13 +1,16 @@
 #!/usr/bin/python3
 """ """
-from models.base_model import BaseModel
-import unittest
-import datetime
-from uuid import UUID
-import json
 import os
+import unittest
+import json
+import time
+from uuid import UUID
+from datetime import datetime, timedelta
+from unittest.mock import patch
+from models.base_model import BaseModel
 
 
+@unittest.skipIf(os.getenv("HBNB_TYPE_STORAGE") == "db", "Skipping: not using DBStorage")
 class test_basemodel(unittest.TestCase):
     """ """
 
@@ -19,7 +22,8 @@ class test_basemodel(unittest.TestCase):
 
     def setUp(self):
         """ """
-        pass
+        if os.path.exists("file.json"):
+            os.remove('file.json')
 
     def tearDown(self):
         try:
