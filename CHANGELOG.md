@@ -3,13 +3,27 @@
 <a name="unreleased"></a>
 ## [Unreleased]
 
-### Chores
-- **setup_mysql_dev.sql:** Added MySQL setup file for development
-- **setup_mysql_test.sql:** Added MySQL setup file for testing
+### Code Refactoring
+- **console.py:** refactor to use comparison operators for equality tests
+- **console.py:** refactored precmd to use comparison operator for equality test
+- **console.py:** refactored do_count to call storage.all
+- **console.py:** refactored do_all to call storage.all
+- **console.py:** Refactored do_show to call storage.all
+
+### Features
+- **console.py:** Updated the do_create method to handle the <key name>=<value> parameter syntax for instantiation with kwargs
+
+### Styles
+- **console:** pycodestyle formatting
+- **console.py:** pycodestyle formatting
 
 
 <a name="v2.1.0"></a>
 ## [v2.1.0] - 2025-02-12
+### Chores
+- **setup_mysql_dev.sql:** Added MySQL setup file for development ([f34c4e0](https://github.com/mwanzaalbert/AirBnB_clone_v2/commit/f34c4e0f3c21d8c0d5996b87cae25969fe1323ea))
+- **setup_mysql_test.sql:** Added MySQL setup file for testing ([59eeb6e](https://github.com/mwanzaalbert/AirBnB_clone_v2/commit/59eeb6eed7268f39d8ed6d3f66d8fcaab73e3dbd))
+
 ### Code Refactoring
 - **console.py:** Refactored storage import from models ([8fcd9e7](https://github.com/mwanzaalbert/AirBnB_clone_v2/commit/8fcd9e75692ff88124b7e5fa148e98db35337d0f))
 - **console.py:** Refactored exit() and print() with return True in do_EOF method ([d534c1e](https://github.com/mwanzaalbert/AirBnB_clone_v2/commit/d534c1e7a511d17424e8fcbdbe4c5ea7985d30a6))
