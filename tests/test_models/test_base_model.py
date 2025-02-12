@@ -1,5 +1,6 @@
 #!/usr/bin/python3
-""" """
+# -*- coding: utf-8 -*-
+"""Unit tests for BaseModel"""
 import os
 import unittest
 import json
@@ -11,16 +12,16 @@ from models.base_model import BaseModel
 @unittest.skipIf(os.getenv("HBNB_TYPE_STORAGE") == "db",
                  "Skipping: not using DBStorage")
 class TestBaseModel(unittest.TestCase):
-    """ """
+    """Test cases for the BaseModel class"""
 
     def __init__(self, *args, **kwargs):
-        """ """
+        """Initialize test cases"""
         super().__init__(*args, **kwargs)
         self.name = 'BaseModel'
         self.value = BaseModel
 
     def setUp(self):
-        """ """
+        """Set up test environment by removing file.json"""
         if os.path.exists("file.json"):
             os.remove('file.json')
 
@@ -32,19 +33,19 @@ class TestBaseModel(unittest.TestCase):
             pass
 
     def test_default(self):
-        """ """
+        """Test if a new instance is correctly created"""
         i = self.value()
         self.assertEqual(type(i), self.value)
 
     def test_kwargs(self):
-        """ """
+        """Test instantiation with **kwargs"""
         i = self.value()
         copy = i.to_dict()
         new = BaseModel(**copy)
         self.assertFalse(new is i)
 
     def test_kwargs_int(self):
-        """ """
+        """Test passing an integer in kwargs"""
         i = self.value()
         copy = i.to_dict()
         copy.update({1: 2})
@@ -52,16 +53,21 @@ class TestBaseModel(unittest.TestCase):
             new = BaseModel(**copy)
 
     def test_save(self):
-        """ Testing save """
+        """Test the save method to ensure correct JSON serialization"""
         i = self.value()
         i.save()
         key = self.name + "." + i.id
+
+        self.assertTrue(os.path.exists("file.json"),
+                        "file.json was not created")
+
         with open('file.json', 'r') as f:
             j = json.load(f)
+            self.assertIn(key, j)
             self.assertEqual(j[key], i.to_dict())
 
     def test_str(self):
-        """ """
+        """Test the string representation of an instance"""
         i = self.value()
 
         try:
@@ -73,19 +79,19 @@ class TestBaseModel(unittest.TestCase):
                          i.__dict__))
 
     def test_todict(self):
-        """ """
+        """Test conversion to dictionary"""
         i = self.value()
         n = i.to_dict()
         self.assertEqual(i.to_dict(), n)
 
     def test_kwargs_none(self):
-        """ """
+        """Test passing None as kwargs"""
         n = {None: None}
         with self.assertRaises(TypeError):
             new = self.value(**n)
 
     def test_kwargs_one(self):
-        """ """
+        """Test instantiation with a single named attribute"""
         n = {'Name': 'test'}
 
         new = self.value(**n)
@@ -93,12 +99,12 @@ class TestBaseModel(unittest.TestCase):
         self.assertEqual(getattr(new, 'Name'), 'test')
 
     def test_id(self):
-        """ """
+        """Test that id is a string"""
         new = self.value()
         self.assertEqual(type(new.id), str)
 
     def test_created_at(self):
-        """ """
+        """Test that created_at is a datetime object"""
         new = self.value()
         self.assertIsInstance(new.updated_at, datetime)
 
