@@ -3,14 +3,13 @@
 import os
 import unittest
 import json
-import time
-from uuid import UUID
 from datetime import datetime, timedelta
 from unittest.mock import patch
 from models.base_model import BaseModel
 
 
-@unittest.skipIf(os.getenv("HBNB_TYPE_STORAGE") == "db", "Skipping: not using DBStorage")
+@unittest.skipIf(os.getenv("HBNB_TYPE_STORAGE") == "db",
+                 "Skipping: not using DBStorage")
 class test_basemodel(unittest.TestCase):
     """ """
 
@@ -28,7 +27,7 @@ class test_basemodel(unittest.TestCase):
     def tearDown(self):
         try:
             os.remove('file.json')
-        except:
+        except FileNotFoundError as e:
             pass
 
     def test_default(self):
@@ -102,10 +101,40 @@ class test_basemodel(unittest.TestCase):
         new = self.value()
         self.assertIsInstance(new.updated_at, datetime)
 
-    def test_updated_at(self):
-        """ """
+    @patch('models.base_model.datetime')
+    def test_updated_at(self, mock_datetime):
+        """Test that updated_at is updated correctly"""
+        # Configure the mock to return a specific datetime object
+        mock_now = datetime.now()
+        mock_datetime.now.return_value = mock_now
+
+        # Create a new BaseModel instance
         new = self.value()
-        self.assertEqual(type(new.updated_at), datetime.datetime)
+
+        # Check that updated_at is a datetime object
+        self.assertIsInstance(new.updated_at, datetime)
+
+        # Check that created_at and updated_at are initially the same
+        self.assertEqual(new.created_at, new.updated_at)
+
+        # Save the old updated_at value
+        old_updated_at = new.updated_at
+
+        # Simulate 5 seconds later
+        mock_datetime.now.return_value = old_updated_at + timedelta(seconds=5)
+        new.save()
+
+        # Convert the instance to a dictionary and back to a BaseModel instance
         n = new.to_dict()
-        new = BaseModel(**n)
-        self.assertFalse(new.created_at == new.updated_at)
+
+        # Temporarily un-mock datetime to allow datetime.strptime
+        # to work correctly
+        with patch('models.base_model.datetime',
+                   wraps=datetime) as mock_datetime_unmocked:
+            new = BaseModel(**n)
+
+        # Check that created_at and updated_at are no longer the same
+        self.assertNotEqual(new.created_at, new.updated_at)
+
+        # Check that updated_at is greater than the old updated_at
+        self.assertTrue(new.updated_at > old_updated_at)
