@@ -22,6 +22,7 @@ __license__ = "MIT"
 __date__ = "2025-02-12"
 __version__ = "2.1"
 
+
 @unittest.skipIf(os.getenv("HBNB_TYPE_STORAGE") != "db",
                  "Skipping: not using DBStorage")
 class BaseTestDBStorage(unittest.TestCase):
