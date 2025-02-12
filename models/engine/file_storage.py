@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 """This module defines a class to manage file storage for hbnb clone"""
 import json
+import importlib
 
 
 class FileStorage:
@@ -8,9 +9,36 @@ class FileStorage:
     __file_path = 'file.json'
     __objects = {}
 
-    def all(self):
+    def all(self, cls=None):
         """Returns a dictionary of models currently in storage"""
-        return FileStorage.__objects
+        classes = {'BaseModel',
+                'User', 'Place',
+                'State', 'City', 'Amenity',
+                'Review'
+              }
+        
+        if cls is not None:
+            if isinstance(cls, str):
+                if cls not in classes:
+                    return {}
+                try:
+                    # Dynamically import the class
+                    module_path = f"models.{cls.lower()}"  # Convert class name to module name
+                    module = importlib.import_module(module_path)
+                    cls = getattr(module, cls)  # Get the class from the module
+                    
+                except (ImportError, AttributeError):
+                    print("** class doesn't exist **")
+                
+                    
+            # Filter objects based on the class
+            return {
+                key: value
+                for key, value in self.__objects.items()
+                if isinstance(value, cls)
+                }
+                
+        return self.__objects
 
     def new(self, obj):
         """Adds new object to storage dictionary"""
