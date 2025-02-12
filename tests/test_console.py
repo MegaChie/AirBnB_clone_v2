@@ -313,7 +313,6 @@ class TestDotCommands(TestFileStorageConsole):
     def setUp(self):
         """Set up the test environment by creating a FileStorage instance and
         clearing the file."""
-        print("setUp: - > ", self._classes)
         for cls in self._classes:
             with patch('sys.stdout', new=StringIO()) as output:
                 HBNBCommand().onecmd(f"create {cls}")
