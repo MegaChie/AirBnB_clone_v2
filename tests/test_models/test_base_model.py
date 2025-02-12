@@ -63,6 +63,12 @@ class test_basemodel(unittest.TestCase):
     def test_str(self):
         """ """
         i = self.value()
+        
+        try:
+            delattr(i, '_sa_instance_state')
+        except AttributeError:
+            pass
+        
         self.assertEqual(str(i), '[{}] ({}) {}'.format(self.name, i.id,
                          i.__dict__))
 
