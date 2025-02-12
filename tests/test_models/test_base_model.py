@@ -63,12 +63,12 @@ class test_basemodel(unittest.TestCase):
     def test_str(self):
         """ """
         i = self.value()
-        
+
         try:
             delattr(i, '_sa_instance_state')
         except AttributeError:
             pass
-        
+
         self.assertEqual(str(i), '[{}] ({}) {}'.format(self.name, i.id,
                          i.__dict__))
 
@@ -87,8 +87,10 @@ class test_basemodel(unittest.TestCase):
     def test_kwargs_one(self):
         """ """
         n = {'Name': 'test'}
-        with self.assertRaises(KeyError):
-            new = self.value(**n)
+        
+        new = self.value(**n)
+        self.assertIn('Name', dir(new))
+        self.assertEqual(getattr(new, 'Name'), 'test')
 
     def test_id(self):
         """ """
