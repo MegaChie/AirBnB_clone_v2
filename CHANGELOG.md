@@ -1,5 +1,5 @@
-<a name="unreleased"></a>
-## [Unreleased]
+<a name="Final release"></a>
+## [Final version]
 
 
 <a name="v2.1.0"></a>
