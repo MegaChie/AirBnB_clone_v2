@@ -2,14 +2,16 @@
 """ Console Module """
 import cmd
 import sys
+import re
+import json
 from models.base_model import BaseModel
-from models import storage
 from models.user import User
 from models.place import Place
 from models.state import State
 from models.city import City
 from models.amenity import Amenity
 from models.review import Review
+from models import storage
 
 
 class HBNBCommand(cmd.Cmd):
@@ -114,16 +116,65 @@ class HBNBCommand(cmd.Cmd):
 
     def do_create(self, args):
         """ Create an object of any class"""
-        if not args:
+        cls, _, params = args.partition(" ")
+
+        if not cls:
             print("** class name missing **")
             return
-        elif args not in HBNBCommand.classes:
+
+        if cls not in HBNBCommand.classes:
             print("** class doesn't exist **")
             return
-        new_instance = HBNBCommand.classes[args]()
-        storage.save()
-        print(new_instance.id)
-        storage.save()
+
+        if params:
+            # substitute single quote for double to handle json parsing
+            params = re.sub(r'[\']', '"', params)
+
+            # patterns for the attributes' values in the param syntax <key name>=<value>
+            strings = r"""["'](?P<string>[A-Za-z0-9_,!@#$%^&*\.-]+)["']"""
+            floats = r"(?P<float>(?:[-]?[0-9]+(?=\.))(?:\.[0-9]*(?![\.0-9-]+))"
+            ints = r"(?P<int>[-]?[0-9]+(?=\s))"
+
+            # pattern for param syntax: <key name>=<value> [<key name>=<value>...]
+            attr_pattern = rf"""
+            \b(?P<attr_name>[A-Za-z_]+)(?=\=)                  # Attribute name
+            (?:\=)
+            (?P<value>{strings}|(?P<numeric>{ints}|{floats}))) # Attribute value
+            (?:\s*)
+            """
+
+            pattern = re.compile(attr_pattern, re.VERBOSE)
+            matches = pattern.findall(params)
+
+            if matches:
+                attr_dict = {}
+                for match in matches:
+                    key, value, str_val, num_val, _, _ = match
+                    try:
+                        val = json.loads(value) if str_val else json.loads(num_val)
+
+                    except (SyntaxError, json.JSONDecodeError) as e:
+                        pass
+
+                    else:
+                        if isinstance(val, str) and '_' in val:
+                            translator = str.maketrans("_", " ")
+                            attr_dict[key] = val.translate(translator)
+                        else:
+                            attr_dict[key] = val
+
+                new_instance = HBNBCommand.classes[cls](**attr_dict)
+                new_instance.save()
+                print(new_instance.id)
+            else:
+                print("Invalid param syntax. ")
+                print("[Usage]: create <className> <key name>=<value> [<key name>=<value>...]")
+
+        else:
+            new_instance = HBNBCommand.classes[cls]()
+            new_instance.save()
+            print(new_instance.id)
+
 
     def help_create(self):
         """ Help information for the create method """
