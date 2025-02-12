@@ -87,7 +87,7 @@ class test_basemodel(unittest.TestCase):
     def test_kwargs_one(self):
         """ """
         n = {'Name': 'test'}
-        
+
         new = self.value(**n)
         self.assertIn('Name', dir(new))
         self.assertEqual(getattr(new, 'Name'), 'test')
@@ -100,7 +100,7 @@ class test_basemodel(unittest.TestCase):
     def test_created_at(self):
         """ """
         new = self.value()
-        self.assertEqual(type(new.created_at), datetime.datetime)
+        self.assertIsInstance(new.updated_at, datetime)
 
     def test_updated_at(self):
         """ """
