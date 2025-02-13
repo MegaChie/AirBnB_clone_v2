@@ -4,6 +4,7 @@ import cmd
 import sys
 import re
 import json
+import sqlalchemy
 from models.base_model import BaseModel
 from models.user import User
 from models.place import Place
@@ -168,19 +169,34 @@ class HBNBCommand(cmd.Cmd):
                         else:
                             attr_dict[key] = val
 
-                new_instance = HBNBCommand.classes[cls](**attr_dict)
-                new_instance.save()
-                print(new_instance.id)
+                    new_instance = HBNBCommand.classes[cls](**attr_dict)
+                    print(new_instance.id)
+
+                    try:
+                        new_instance.save()
+
+                    except sqlalchemy.exc.IntegrityError as e:
+                        message = getattr(e, '_message')
+                        message = message().partition(" ")[-1]
+                        print(message.strip('()').split(',')[-1])
+                        storage.rollback()
+
             else:
                 print("Invalid param syntax. ")
                 print("[Usage]: create <className> <key name>=<value>" +
                       " [<key name>=<value>...]")
 
         else:
-            if os.getenv('HBNB_TYPE_STORAGE') != 'db':
-                new_instance = HBNBCommand.classes[cls]()
+            new_instance = HBNBCommand.classes[cls]()
+            print(new_instance.id)
+
+            try:
                 new_instance.save()
-                print(new_instance.id)
+            except sqlalchemy.exc.IntegrityError as e:
+                message = getattr(e, '_message')
+                message = message().partition(" ")[-1]
+                print(message.strip('()').split(',')[-1])
+                storage.rollback()
 
     def help_create(self):
         """Help information for the create method."""
