@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 """Console Module."""
+import os
 import cmd
 import sys
 import re
@@ -130,6 +131,8 @@ class HBNBCommand(cmd.Cmd):
             print("** class doesn't exist **")
             return
 
+        new_instance = HBNBCommand.classes[cls]()
+
         if params:
             # substitute single quote for double to handle json parsing
             params = re.sub(r'[\']', '"', params)
@@ -170,33 +173,15 @@ class HBNBCommand(cmd.Cmd):
                             attr_dict[key] = val
 
                     new_instance = HBNBCommand.classes[cls](**attr_dict)
-                    print(new_instance.id)
 
-                    try:
-                        new_instance.save()
+            # else:
+            #     print("Invalid param syntax. ")
+            #     print("[Usage]: create <className> <key name>=<value>" +
+            #           " [<key name>=<value>...]")
 
-                    except sqlalchemy.exc.IntegrityError as e:
-                        message = getattr(e, '_message')
-                        message = message().partition(" ")[-1]
-                        print(message.strip('()').split(',')[-1])
-                        storage.rollback()
+        print(new_instance.id)
 
-            else:
-                print("Invalid param syntax. ")
-                print("[Usage]: create <className> <key name>=<value>" +
-                      " [<key name>=<value>...]")
-
-        else:
-            new_instance = HBNBCommand.classes[cls]()
-            print(new_instance.id)
-
-            try:
-                new_instance.save()
-            except sqlalchemy.exc.IntegrityError as e:
-                message = getattr(e, '_message')
-                message = message().partition(" ")[-1]
-                print(message.strip('()').split(',')[-1])
-                storage.rollback()
+        new_instance.save()
 
     def help_create(self):
         """Help information for the create method."""
