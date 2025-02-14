@@ -4,7 +4,10 @@
 DBStorage module for managing database storage in MySQL.
 
 This module defines the `DBStorage` class, which provides methods
-to interact with a MySQL database using SQLAlchemy.
+to interact with a MySQL database using SQLAlchemy. It handles
+database connections, session management, and CRUD operations
+for various models.
+
 """
 import os
 import importlib
@@ -28,11 +31,16 @@ __version__ = "2.1"
 
 class DBStorage:
     """
-    This class manages storage of hbnb models in a MySQL database.
+    Manages storage of hbnb models in a MySQL database.
+
+    This class provides methods to interact with a MySQL database
+    using SQLAlchemy. It handles database connections, session
+    management, and CRUD operations for various models.
 
     Attributes_:
         __engine (sqlalchemy.engine.Engine): The database engine.
         __session (sqlalchemy.orm.scoped_session): The database session.
+        __objects (dict): A dictionary to store objects in memory.
     """
 
     DB_CLASSES = [User, State, City, Amenity, Place, Review]
@@ -81,7 +89,21 @@ class DBStorage:
                       [-1].strip('()').split(',')[-1])
 
     def all(self, cls=None):
-        """Return a dictionary of models currently in storage."""
+        """
+        Return a dictionary of models currently in storage.
+
+        Args_:
+            cls (str or class, optional): The class or class name to filter
+                                          results.
+                                           If None, returns all objects.
+
+        Returns_:
+            dict: A dictionary of objects, where the key is in the format
+                  `<class_name>.<object_id>` and the value is the object
+                  itself.
+        """
+        self.reload()
+
         if cls is not None:
             classes = ('BaseModel',
                        'User',
@@ -121,24 +143,37 @@ class DBStorage:
         return self.__objects
 
     def new(self, obj):
-        """Add new object to storage dictionary."""
+        """
+        Add a new object to the storage dictionary.
+
+        Args_:
+            obj: The object to add to the session.
+        """
         self.__session.add(obj)
 
     def save(self):
-        """Save storage dictionary to file."""
+        """Commit the current session to the database."""
         self.__session.commit()
 
     def reload(self):
-        """Load storage dictionary from file."""
+        """
+        Reload the storage dictionary from the database.
+
+        This method creates all tables if they don't exist and initializes
+        a new session.
+        """
         try:
             # Bind the engine to the Base's metadata
             Base.metadata.bind = self.__engine
 
+            # Create all tables defined in the Base
             Base.metadata.create_all(self.__engine)
 
+            # Create a session factory
             session_factory = sessionmaker(bind=self.__engine,
                                            expire_on_commit=False)
 
+            # Create a scoped session
             Session = scoped_session(session_factory)
 
         except OperationalError as e:
@@ -149,7 +184,12 @@ class DBStorage:
             self.__session = Session()
 
     def delete(self, obj=None):
-        """Delete object from the storage."""
+        """
+        Delete an object from the storage.
+
+        Args_:
+            obj: The object to delete from the session.
+        """
         if obj is not None:
             self.__session.delete(obj)
 
@@ -162,7 +202,7 @@ class DBStorage:
         self.save()
 
     def close(self):
-        """Close the working SQLAlchemy session."""
+        """Close the current SQLAlchemy session."""
         self.__session.close()
 
     def rollback(self):
