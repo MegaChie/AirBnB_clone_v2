@@ -1,0 +1,42 @@
+import MySQLdb
+
+# Connect to the MySQL database
+connection = MySQLdb.connect(host="HBNB_MYSQL_HOST",
+                             user="HBNB_MYSQL_USER",
+                             passwd="HBNB_MYSQL_PWD",
+                             db="HBNB_MYSQL_DB")
+
+# Create a cursor object to execute SQL queries
+cursor = connection.cursor()
+
+def get_record_count():
+    # Execute a SQL query to get the count of records in the 'states' table
+    cursor.execute("SELECT COUNT(*) FROM states")
+    # Fetch the result of the query
+    count = cursor.fetchone()[0]
+    return count
+
+def create_state_record(state_name):
+    # Execute a SQL command to create a new record in the 'states' table
+    cursor.execute("INSERT INTO states (name) VALUES (%s)", (state_name,))
+    # Commit the transaction
+    connection.commit()
+
+# Get the initial count of records
+initial_count = get_record_count()
+
+# Create a new state record
+create_state_record("California")
+
+# Get the count of records after creating the new state record
+final_count = get_record_count()
+
+# Compare the counts to check if the test passed
+if final_count - initial_count == 1:
+    print("Test passed: A new record was successfully added.")
+else:
+    print("Test failed: No new record was added or multiple records were added.")
+
+# Close the cursor and connection
+cursor.close()
+connection.close()

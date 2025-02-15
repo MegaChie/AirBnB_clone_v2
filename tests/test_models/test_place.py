@@ -19,9 +19,10 @@ class test_Place(test_basemodel):
         self.assertEqual(type(new.city_id), str)
 
     def test_user_id(self):
-        """ """
-        new = self.value()
-        self.assertEqual(type(new.user_id), str)
+	""" """
+	new = self.value(user_id="123")
+	self.assertEqual(type(new.user_id), str)
+	self.assertNotEqual(new.user_id, "")
 
     def test_name(self):
         """ """
