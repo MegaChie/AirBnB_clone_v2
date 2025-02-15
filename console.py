@@ -129,6 +129,8 @@ class HBNBCommand(cmd.Cmd):
             print("** class doesn't exist **")
             return
 
+        new_instance = HBNBCommand.classes[cls]()
+
         if params:
             # substitute single quote for double to handle json parsing
             params = re.sub(r'[\']', '"', params)
@@ -170,18 +172,21 @@ class HBNBCommand(cmd.Cmd):
                             attr_dict[key] = val
 
                 new_instance = HBNBCommand.classes[cls](**attr_dict)
-                new_instance.save()
-                print(new_instance.id)
-            else:
-                print("Invalid param syntax. ")
-                print(
-                    "[Usage]: create <className> " +
-                    "<key name>=<value> [<key name>=<value>...]")
+        #         new_instance.save()
+        #         print(new_instance.id)
+        #     else:
+        #         print("Invalid param syntax. ")
+        #         print(
+        #             "[Usage]: create <className> " +
+        #             "<key name>=<value> [<key name>=<value>...]")
 
-        else:
-            new_instance = HBNBCommand.classes[cls]()
-            new_instance.save()
-            print(new_instance.id)
+        # else:
+        #     new_instance = HBNBCommand.classes[cls]()
+        #     new_instance.save()
+        #     print(new_instance.id)
+
+        new_instance.save()
+        print(new_instance.id)
 
     def help_create(self):
         """ Help information for the create method """
