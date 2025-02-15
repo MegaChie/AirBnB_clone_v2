@@ -257,6 +257,8 @@ class HBNBCommand(cmd.Cmd):
         """ Shows all objects, or all objects of a class"""
         print_list = []
 
+        storage.reload()
+
         if args:
             cls = args.split(' ')[0]  # remove possible trailing args
             if cls not in HBNBCommand.classes:
@@ -287,6 +289,8 @@ class HBNBCommand(cmd.Cmd):
         if cls not in HBNBCommand.classes:
             print("** class doesn't exist **")
             return
+
+        storage.reload()
 
         count = 0
         for k, v in storage.all().items():
