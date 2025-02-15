@@ -10,8 +10,6 @@ Handles relationships with `City`, `User`, `Review`, and `Amenity`.
 """
 import os
 from models.base_model import BaseModel, Base
-# from models.amenity import Amenity
-# from models.review import Review
 from sqlalchemy.orm import relationship
 from sqlalchemy import Integer, Column, String, ForeignKey, Float, Table
 from typing import List
@@ -59,8 +57,6 @@ class Place(BaseModel, Base):
 
     __tablename__ = "places"
 
-    amenity_ids: List[str] = []
-
     city_id = Column(String(60), ForeignKey('cities.id'), nullable=False)
     user_id = Column(String(60), ForeignKey('users.id'), nullable=False)
     name = Column(String(128), nullable=False)
@@ -69,8 +65,8 @@ class Place(BaseModel, Base):
     number_bathrooms = Column(Integer, nullable=False, default=0)
     max_guest = Column(Integer, nullable=False, default=0)
     price_by_night = Column(Integer, nullable=False, default=0)
-    latitude = Column(Float, nullable=True, default=0.0)
-    longitude = Column(Float, nullable=True, default=0.0)
+    latitude = Column(Float, nullable=True)
+    longitude = Column(Float, nullable=True)
 
     if os.getenv("HBNB_TYPE_STORAGE") == 'db':
         reviews = relationship('Review',
@@ -93,6 +89,7 @@ class Place(BaseModel, Base):
         price_by_night: int = 0
         latitude: float = 0.0
         longitude: float = 0.0
+        amenity_ids: List[str] = []
 
         @property
         def reviews(self):
