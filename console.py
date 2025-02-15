@@ -21,17 +21,17 @@ class HBNBCommand(cmd.Cmd):
     prompt = '(hbnb) ' if sys.__stdin__.isatty() else ''
 
     classes = {
-               'BaseModel': BaseModel, 'User': User, 'Place': Place,
-               'State': State, 'City': City, 'Amenity': Amenity,
-               'Review': Review
-              }
+        'BaseModel': BaseModel, 'User': User, 'Place': Place,
+        'State': State, 'City': City, 'Amenity': Amenity,
+        'Review': Review
+    }
     dot_cmds = ['all', 'count', 'show', 'destroy', 'update']
-    
+
     types = {
-             'number_rooms': int, 'number_bathrooms': int,
-             'max_guest': int, 'price_by_night': int,
-             'latitude': float, 'longitude': float
-            }
+        'number_rooms': int, 'number_bathrooms': int,
+        'max_guest': int, 'price_by_night': int,
+        'latitude': float, 'longitude': float
+    }
 
     def preloop(self):
         """Prints if isatty is false"""
@@ -91,7 +91,9 @@ class HBNBCommand(cmd.Cmd):
 
     def postcmd(self, stop, line):
         """Prints if isatty is false"""
-        if not sys.__stdin__.isatty() and line.strip() != "" : #  'and line.strip() != ""' added to Suppress Extra (hbnb) Prompt in postcmd
+        if not sys.__stdin__.isatty() and line.strip() != "":
+            # 'and line.strip() != ""' added to Suppress Extra
+            # (hbnb) Prompt in postcmd
             print('(hbnb) ', end='')
         return stop
 
@@ -118,11 +120,11 @@ class HBNBCommand(cmd.Cmd):
     def do_create(self, args):
         """ Create an object of any class"""
         cls, _, params = args.partition(" ")
-        
+
         if not cls:
             print("** class name missing **")
             return
-        
+
         if cls not in HBNBCommand.classes:
             print("** class doesn't exist **")
             return
@@ -130,29 +132,32 @@ class HBNBCommand(cmd.Cmd):
         if params:
             # substitute single quote for double to handle json parsing
             params = re.sub(r'[\']', '"', params)
-            
-            # patterns for the attributes' values in the param syntax <key name>=<value>
+
+            # patterns for the attributes' values in the param syntax
+            # <key name>=<value>
             strings = r"""["'](?P<string>[A-Za-z0-9_,!@#$%^&*\.-]+)["']"""
             floats = r"(?P<float>(?:[-]?[0-9]+(?=\.))(?:\.[0-9]*(?![\.0-9-]+))"
             ints = r"(?P<int>[-]?[0-9]+(?=\s))"
-            
-            # pattern for param syntax: <key name>=<value> [<key name>=<value>...]
+
+            # pattern for param syntax:
+            # <key name>=<value> [<key name>=<value>...]
             attr_pattern = rf"""
             \b(?P<attr_name>[A-Za-z_]+)(?=\=)                  # Attribute name
             (?:\=)
-            (?P<value>{strings}|(?P<numeric>{ints}|{floats}))) # Attribute value
+            (?P<value>{strings}|(?P<numeric>{ints}|{floats}))) # Attr value
             (?:\s*)
             """
 
             pattern = re.compile(attr_pattern, re.VERBOSE)
             matches = pattern.findall(params)
-            
+
             if matches:
                 attr_dict = {}
                 for match in matches:
                     key, value, str_val, num_val, _, _ = match
                     try:
-                        val = json.loads(value) if str_val else json.loads(num_val) 
+                        val = json.loads(
+                            value) if str_val else json.loads(num_val)
 
                     except (SyntaxError, json.JSONDecodeError) as e:
                         pass
@@ -169,8 +174,10 @@ class HBNBCommand(cmd.Cmd):
                 print(new_instance.id)
             else:
                 print("Invalid param syntax. ")
-                print("[Usage]: create <className> <key name>=<value> [<key name>=<value>...]")
-        
+                print(
+                    "[Usage]: create <className> " +
+                    "<key name>=<value> [<key name>=<value>...]")
+
         else:
             new_instance = HBNBCommand.classes[cls]()
             new_instance.save()
@@ -280,12 +287,12 @@ class HBNBCommand(cmd.Cmd):
         if cls not in HBNBCommand.classes:
             print("** class doesn't exist **")
             return
-        
+
         count = 0
         for k, v in storage.all().items():
             if cls == k.split('.')[0]:
                 count += 1
-        
+
         print(count)
 
     def help_count(self):
@@ -294,7 +301,7 @@ class HBNBCommand(cmd.Cmd):
 
     def do_update(self, args):
         """ Updates a certain object with new info """
-        
+
         c_name = c_id = att_name = att_val = kwargs = ''
 
         # isolate cls from id/args, ex: (<cls>, delim, <id/args>)
