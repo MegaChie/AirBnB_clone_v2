@@ -101,7 +101,7 @@ class TestFileStorageConsole(unittest.TestCase):
     def tearDown(self):
         """Clean up after each test"""
         # Clear the in-memory cache of objects
-        self.storage._FileStorage__objects.clear()
+        self.storage.all().clear()
 
 
 class TestCreateCommand(TestFileStorageConsole):
@@ -544,7 +544,6 @@ class TestDBStorageConsole(BaseTestDBStorage):
         self.assertEqual(len(entries), 1)
         self.assertEqual(self.get_table_entries_count(), 1)
         self.assertIn(entries[-1], self.storage.all(self.model).keys())
-        print(entries)
 
     def test_05_table_is_not_empty_and_has_one_entry(self):
         """Confirm the model's table is not empty"""
@@ -559,7 +558,6 @@ class TestDBStorageConsole(BaseTestDBStorage):
         self.assertEqual(len(self.storage.all(self.model)), 1)
         self.assertEqual(len(entries), 1)
         self.assertEqual(self.get_table_entries_count(), 1)
-        print(entries)
 
     def test_07_DBStorage__objects_has_two_objects_of_the_model(self):
         """Confirm __objects size is greater thant 1"""
@@ -576,7 +574,6 @@ class TestDBStorageConsole(BaseTestDBStorage):
         self.assertEqual(len(self.storage.all(self.model)), 2)
         self.assertEqual(len(entries), 2)
         self.assertEqual(self.get_table_entries_count(), 2)
-        print(entries)
 
     def test_08_table_has_two_entries(self):
         """Confirm users table has more than one row"""
@@ -612,13 +609,10 @@ class TestDBStorageConsole(BaseTestDBStorage):
 
         entry_id = key.split('.')[-1]
 
-        print("entries before delete", entries)
         # Refresh the MySQLdb connection to see the changes
         self.conn.commit()
 
         entries.pop(-1)
-
-        print("entries after delete", entries)
 
         self.assertTrue(len(self.users) < initial_count,
                         "Entry not deleted from the DB")
@@ -650,8 +644,8 @@ class TestDBStorageConsole(BaseTestDBStorage):
         result = self.cursor.fetchone()
         self.assertTrue(result is not None)
 
-    def test_11_create_a_table_entry_without_attributes_values_pairs(self):
-        """Test that creating a User with missing attributes via the console
+    def test_11_create_a_table_entry_without_kwargs(self):
+        """Test that creating a record with missing attributes via the console
         does not add it to the database"""
         models = {'users': "User",
                   'places': "Place",
@@ -662,11 +656,12 @@ class TestDBStorageConsole(BaseTestDBStorage):
                   }
 
         with patch("sys.stdout", new=StringIO()) as output:
-            with self.assertRaises(IntegrityError):
-                args = f'create {models[self.tablename]}'
-                HBNBCommand().onecmd(args)
-            # Roll back the session to clear the invalid state
-            self.storage.rollback()
+            args = f'create {models[self.tablename]}'
+            HBNBCommand().onecmd(args)
+            instance_id = output.getvalue().strip()
+
+        self.assertEqual(instance_id, "")
+        self.assertFalse(instance_id)
 
 
 class Test_02_User(TestDBStorageConsole):
@@ -678,7 +673,7 @@ class Test_02_User(TestDBStorageConsole):
     TestDBStorageConsole.create_attr_for_entries_created_based_table_name(
         tablename)
 
-    def test_03_create_one_user_with_valid_attributes(self):
+    def test_03_create_user_all_valid_attributes(self):
         """Test that creating a User via the console adds it to the database"""
         # Capture console output
         with patch("sys.stdout", new=StringIO()) as output:
@@ -687,78 +682,67 @@ class Test_02_User(TestDBStorageConsole):
                 'first_name="Guillaume" last_name="Snow"')
             user_id = output.getvalue().strip()
 
-        self.users.append("User." + user_id)
+        self.assertNotEqual(user_id, "",
+                            "Failed to get User ID from console output")
         self.assertTrue(len(user_id) > 0,
                         "Failed to get User ID from console output")
         self.assertRegex(user_id, r'^[0-9a-f-]{36}$')
+        self.users.append("User." + user_id)
 
-    def test_06_create_additional_user_with_valid_attributes(self):
-        """Test that creating a User via the console adds it to the database"""
-        # Capture console output
+    def test_06_create_user_missing_nullable_attributes(self):
+        """Test that creating a User with missing nullable attributes via the
+        console does not add it to the database"""
+        # Test user creation missing last_name & first_name attributes
         with patch("sys.stdout", new=StringIO()) as output:
-            HBNBCommand().onecmd(
-                'create User email="johndoe@example.com" ' +
-                'password="password" first_name="John" last_name="Doe"')
+            args = 'create User email="a@a.com" password="pwd"'
+            HBNBCommand().onecmd(args)
+
             user_id = output.getvalue().strip()
 
-        self.users.append("User." + user_id)
+        self.assertNotEqual(user_id, "",
+                            "Failed to get User ID from console output")
         self.assertTrue(len(user_id) > 0,
                         "Failed to get User ID from console output")
         self.assertRegex(user_id, r'^[0-9a-f-]{36}$')
+        self.users.append("User." + user_id)
 
-    def test_12_create_user_with_single_attribute_value_pair(self):
-        """Test that creating a User with missing attributes via the console
-        does not add it to the database"""
-        # Test missing email attribute
+    def test_13_create_user_missing_non_nullable_attributes(self):
+        """
+        Test that creating a User via the console with missing non_nullable
+        attributes does not add it to the database
+        """
+        # Test missing email and password attributes
         with patch("sys.stdout", new=StringIO()) as output:
-            with self.assertRaises(IntegrityError):
-                args = 'create User first_name="Guillaume"'
-                HBNBCommand().onecmd(args)
-            # Roll back the session to clear the invalid state
-            self.storage.rollback()
+            args = 'create User first_name="Guillaume" last_name="Snow"'
+            HBNBCommand().onecmd(args)
+            user_id = output.getvalue().strip()
 
-    def test_13_create_user_with_missing_attribute_value_pairs(self):
-        """Test that creating a User with missing attributes via the console
-        does not add it to the database"""
-        # Test missing email attribute
-        with patch("sys.stdout", new=StringIO()) as output:
-            with self.assertRaises(IntegrityError):
-                args = 'create User password="guipwd" ' +\
-                    'first_name="Guillaume" last_name="Snow"'
-                HBNBCommand().onecmd(args)
-            # Roll back the session to clear the invalid state
-            self.storage.rollback()
+        self.assertEqual(user_id, "")
+        self.assertFalse(user_id)
 
         # Test missing password attribute
         with patch("sys.stdout", new=StringIO()) as output:
-            with self.assertRaises(IntegrityError):
-                args = 'create User email="gui@hbtn.io" ' +\
-                    'first_name="Guillaume" last_name="Snow"'
-                HBNBCommand().onecmd(args)
-            # Roll back the session to clear the invalid state
-            self.storage.rollback()
+            args = 'create User email="a@a.com"'
+            HBNBCommand().onecmd(args)
+            user_id = output.getvalue().strip()
 
-        # Test missing first_name attribute
-        with patch("sys.stdout", new=StringIO()) as output:
-            with self.assertRaises(IntegrityError):
-                args = 'create User email="gui@hbtn.io" ' +\
-                    'password="guipwd" last_name="Snow"'
-                HBNBCommand().onecmd(args)
-            # Roll back the session to clear the invalid state
-            self.storage.rollback()
+        self.assertEqual(user_id, "")
+        self.assertFalse(user_id)
 
-        # Test missing last_name attribute
+        # Test missing email attribute
         with patch("sys.stdout", new=StringIO()) as output:
-            with self.assertRaises(IntegrityError):
-                args = 'create User email="gui@hbtn.io" ' +\
-                    'password="guipwd" first_name="Guillaume"'
-                HBNBCommand().onecmd(args)
-            # Roll back the session to clear the invalid state
-            self.storage.rollback()
+            args = 'create User password="pwd"'
+            HBNBCommand().onecmd(args)
+            user_id = output.getvalue().strip()
+
+        self.assertEqual(user_id, "")
+        self.assertFalse(user_id)
 
 
 class Test_03_State(TestDBStorageConsole):
-    """Tests DBStorage integration with console commands for the State model"""
+    """
+    Tests DBStorage integration with console commands for the State model
+    """
     tablename = "states"
 
     model = TestDBStorageConsole.get_model_class(tablename)
@@ -766,17 +750,19 @@ class Test_03_State(TestDBStorageConsole):
     TestDBStorageConsole.create_attr_for_entries_created_based_table_name(
         tablename)
 
-    def test_03_create_one_state_with_valid_attributes(self):
+    def test_03_create_state_valid_attributes(self):
         """Test that creating a User via the console adds it to the database"""
         # Capture console output
         with patch("sys.stdout", new=StringIO()) as output:
             HBNBCommand().onecmd('create State name="California"')
             state_id = output.getvalue().strip()
 
-        self.states.append("State." + state_id)
+        self.assertNotEqual(state_id, "",
+                            "Failed to get State ID from console output")
         self.assertTrue(len(state_id) > 0,
                         "Failed to get State ID from console output")
         self.assertRegex(state_id, r'^[0-9a-f-]{36}$')
+        self.states.append("State." + state_id)
 
     def test_06_create_additional_state_with_valid_attributes(self):
         """Test that creating a User via the console adds it to the database"""
@@ -785,14 +771,18 @@ class Test_03_State(TestDBStorageConsole):
             HBNBCommand().onecmd('create State name="Nevada"')
             state_id = output.getvalue().strip()
 
-        self.states.append("State." + state_id)
+        self.assertNotEqual(state_id, "",
+                            "Failed to get State ID from console output")
         self.assertTrue(len(state_id) > 0,
                         "Failed to get State ID from console output")
         self.assertRegex(state_id, r'^[0-9a-f-]{36}$')
+        self.states.append("State." + state_id)
 
 
 class Test_04_City(TestDBStorageConsole):
-    """Tests DBStorage integration with console commands for the City model"""
+    """
+    Tests DBStorage integration with console commands for the City model
+    """
     tablename = "cities"
 
     model = TestDBStorageConsole.get_model_class(tablename)
@@ -800,8 +790,10 @@ class Test_04_City(TestDBStorageConsole):
     TestDBStorageConsole.create_attr_for_entries_created_based_table_name(
         tablename)
 
-    def test_03_create_one_city_with_valid_attributes(self):
-        """Test that creating a City via the console adds it to the database"""
+    def test_03_create_city_existing_state_id(self):
+        """
+        Test that creating a City via the console adds it to the database
+        """
 
         self.assertNotEqual(self.get_table_entries_count(
             "states"), 0, "states table is empty")
@@ -819,13 +811,17 @@ class Test_04_City(TestDBStorageConsole):
             HBNBCommand().onecmd(arg)
             city_id = output.getvalue().strip()
 
-        self.cities.append("City." + city_id)
+        self.assertNotEqual(city_id, "",
+                            "Failed to get City ID from console output")
         self.assertTrue(len(city_id) > 0,
                         "Failed to get City ID from console output")
         self.assertRegex(city_id, r'^[0-9a-f-]{36}$')
+        self.cities.append("City." + city_id)
 
-    def test_06_create_additional_city_with_valid_attributes(self):
-        """Test that creating a City via the console adds it to the database"""
+    def test_06_create_city_all_existing_attributes(self):
+        """
+        Test that creating a City via the console adds it to the database
+        """
         initial_state_count = self.get_table_entries_count("states")
 
         # 1. Create a new State first since City requires a valid state_id
@@ -833,6 +829,8 @@ class Test_04_City(TestDBStorageConsole):
             HBNBCommand().onecmd('create State name="Nevada"')
             state_id = output.getvalue().strip()
 
+        self.assertNotEqual(state_id, "",
+                            "Failed to get State ID from console output")
         self.assertTrue(len(state_id) > 0,
                         "Failed to get State ID from console output")
         self.assertRegex(state_id, r'^[0-9a-f-]{36}$')
@@ -849,10 +847,38 @@ class Test_04_City(TestDBStorageConsole):
                 f'create City name="Reno" state_id="{state_id}"')
             city_id = output.getvalue().strip()
 
-        self.cities.append("City." + city_id)
+        self.assertNotEqual(city_id, "",
+                            "Failed to get City ID from console output")
         self.assertTrue(len(city_id) > 0,
                         "Failed to get City ID from console output")
         self.assertRegex(city_id, r'^[0-9a-f-]{36}$')
+        self.cities.append("City." + city_id)
+
+    def test_12_create_city_non_existent_state_id(self):
+        """
+        Test that creating a City via the console with non_existent state_id
+        does not add it to the database
+        """
+        with patch("sys.stdout", new=StringIO()) as output:
+            args = 'create City name="Fremont" state_id="12345"'
+            HBNBCommand().onecmd(args)
+            city_id = output.getvalue().strip()
+
+        self.assertEqual(city_id, "")
+        self.assertFalse(city_id)
+
+    def test_13_create_city_missing_state_id(self):
+        """
+        Test that creating a City via the console with missing state_id
+        does not add it to the database
+        """
+        with patch("sys.stdout", new=StringIO()) as output:
+            args = 'create City name="Fremont"'
+            HBNBCommand().onecmd(args)
+            city_id = output.getvalue().strip()
+
+        self.assertEqual(city_id, "")
+        self.assertFalse(city_id)
 
 
 class Test_05_Place(TestDBStorageConsole):
@@ -864,7 +890,7 @@ class Test_05_Place(TestDBStorageConsole):
     TestDBStorageConsole.create_attr_for_entries_created_based_table_name(
         tablename)
 
-    def test_03_create_one_place_with_valid_attributes(self):
+    def test_03_create_place_all_existing_attributes(self):
         """
         Test that creating a Place via the console adds it to the database.
         """
@@ -899,14 +925,17 @@ class Test_05_Place(TestDBStorageConsole):
             HBNBCommand().onecmd(arg)
             place_id = output.getvalue().strip()
 
-        self.places.append("Place." + place_id)
+        self.assertNotEqual(place_id, "",
+                            "Failed to get Place ID from console output")
         self.assertTrue(len(place_id) > 0,
                         "Failed to get Place ID from console output")
         self.assertRegex(place_id, r'^[0-9a-f-]{36}$')
+        self.places.append("Place." + place_id)
 
-    def test_06_create_additional_place_with_valid_attributes(self):
+    def test_06_create_place_missing_nullable_and_default_attributes(self):
         """
-        Test that creating a Place via the console adds it to the database.
+        Test that creating a Place via the console with
+        missing_nullable_and_default_attributes adds it to the database.
         """
         initial_state_count = self.get_table_entries_count("states")
         initial_user_count = self.get_table_entries_count("users")
@@ -959,18 +988,115 @@ class Test_05_Place(TestDBStorageConsole):
 
         # 3. Create a Place using the user_id and city_id
         with patch("sys.stdout", new=StringIO()) as output:
-            arg = f'create Place city_id="{city_id}" user_id="{user_id}" ' +\
-                'name="Lovely_place" description="No_description_provided"' +\
-                ' number_rooms=3 number_bathrooms=1 ' +\
-                'max_guest=6 price_by_night=120 latitude=-37.773972 ' +\
-                'longitude=122.431297'
+            arg = f'create Place city_id="{city_id}" ' +\
+                f'user_id="{user_id}" name="Lovely_place"'
             HBNBCommand().onecmd(arg)
             place_id = output.getvalue().strip()
 
-        self.places.append("Place." + place_id)
+        self.assertNotEqual(place_id, "",
+                            "Failed to get Place ID from console output")
         self.assertTrue(len(place_id) > 0,
                         "Failed to get Place ID from console output")
         self.assertRegex(place_id, r'^[0-9a-f-]{36}$')
+        self.places.append("Place." + place_id)
+
+    def test_12_create_place_missing_user_id(self):
+        """
+        Test that creating a Place via the console with missing user_id
+        doesn't add it to the database.
+        """
+        self.assertNotEqual(self.get_table_entries_count(
+            "cities"), 0, "cities table is empty")
+        self.assertTrue(self.get_table_entries_count(
+            "cities") >= 1, "cities table is empty")
+
+        # 1. Get an existing city_id
+        query = 'SELECT id from cities WHERE name=%s;'
+        self.cursor.execute(query, ("San Francisco",))
+        city_id = self.cursor.fetchone()[0]
+
+        # 2. Create a Place without a user_id
+        with patch("sys.stdout", new=StringIO()) as output:
+            arg = f'create Place city_id="{city_id}" name="Wonderful_place"'
+            HBNBCommand().onecmd(arg)
+            place_id = output.getvalue().strip()
+
+        self.assertEqual(place_id, "")
+        self.assertFalse(place_id)
+
+    def test_13_create_place_non_existent_user_id(self):
+        """
+        Test that creating a Place via the console with non_existent user_id
+        doesn't add it to the database.
+        """
+        self.assertNotEqual(self.get_table_entries_count(
+            "cities"), 0, "cities table is empty")
+        self.assertTrue(self.get_table_entries_count(
+            "cities") >= 1, "cities table is empty")
+
+        # 1. Get an existing city_id
+        query = 'SELECT id from cities WHERE name=%s;'
+        self.cursor.execute(query, ("San Francisco",))
+        city_id = self.cursor.fetchone()[0]
+
+        # 2. Create a Place with a non-existent user_id
+        with patch("sys.stdout", new=StringIO()) as output:
+            arg = f'create Place city_id="{city_id}" user_id="12345" ' +\
+                  'name="Wonderful_place"'
+            HBNBCommand().onecmd(arg)
+            place_id = output.getvalue().strip()
+
+        self.assertEqual(place_id, "")
+        self.assertFalse(place_id)
+
+    def test_14_create_place_missing_city_id(self):
+        """
+        Test that creating a Place via the console with missing city_id
+        doesn't add it to the database.
+        """
+        self.assertNotEqual(self.get_table_entries_count(
+            "users"), 0, "users table is empty")
+        self.assertTrue(self.get_table_entries_count(
+            "users") >= 1, "users table is empty")
+
+        # 2. Get an existing user_id
+        query = 'SELECT id from users WHERE last_name=%s;'
+        self.cursor.execute(query, ("Snow",))
+        user_id = self.cursor.fetchone()[0]
+
+        # 3. Create a Place without a city_id
+        with patch("sys.stdout", new=StringIO()) as output:
+            arg = f'create Place user_id="{user_id}" name="Joyful_place"'
+            HBNBCommand().onecmd(arg)
+            place_id = output.getvalue().strip()
+
+        self.assertEqual(place_id, "")
+        self.assertFalse(place_id)
+
+    def test_15_create_place_non_existent_city_id(self):
+        """
+        Test that creating a Place via the console with non-existent city_id
+        doesn't add it to the database.
+        """
+        self.assertNotEqual(self.get_table_entries_count(
+            "users"), 0, "users table is empty")
+        self.assertTrue(self.get_table_entries_count(
+            "users") >= 1, "users table is empty")
+
+        # 2. Get an existing user_id
+        query = 'SELECT id from users WHERE last_name=%s;'
+        self.cursor.execute(query, ("Snow",))
+        user_id = self.cursor.fetchone()[0]
+
+        # 3. Create a Place without a city_id
+        with patch("sys.stdout", new=StringIO()) as output:
+            arg = f'create Place city_id="12345" user_id="{user_id}" ' +\
+                  'name="Joyful_place"'
+            HBNBCommand().onecmd(arg)
+            place_id = output.getvalue().strip()
+
+        self.assertEqual(place_id, "")
+        self.assertFalse(place_id)
 
 
 class Test_06_Review(TestDBStorageConsole):
@@ -984,9 +1110,9 @@ class Test_06_Review(TestDBStorageConsole):
     TestDBStorageConsole.create_attr_for_entries_created_based_table_name(
         tablename)
 
-    def test_03_create_one_place_with_valid_attributes(self):
+    def test_03_create_review_all_existing_attributes(self):
         """
-        Test that creating a Place via the console adds it to the database.
+        Test that creating a Review via the console adds it to the database.
         """
 
         self.assertNotEqual(self.get_table_entries_count(
@@ -1014,16 +1140,18 @@ class Test_06_Review(TestDBStorageConsole):
         # 3. Create a Review using the user_id and city_id
         with patch("sys.stdout", new=StringIO()) as output:
             arg = f'create Review place_id="{place_id}" user_id="{user_id}"' +\
-                ' text="Amazing_place,_huge_kitchen"'
+                ' text="Amazing_place,_beautiful_beach"'
             HBNBCommand().onecmd(arg)
             review_id = output.getvalue().strip()
 
-        self.reviews.append("Review." + review_id)
+        self.assertNotEqual(review_id, "",
+                            "Failed to get Review ID from console output")
         self.assertTrue(len(review_id) > 0,
                         "Failed to get Review ID from console output")
         self.assertRegex(review_id, r'^[0-9a-f-]{36}$')
+        self.reviews.append("Review." + review_id)
 
-    def test_06_create_additional_place_with_valid_attributes(self):
+    def test_06_create_review_all_valid_attributes(self):
         """
         Test that creating a Place via the console adds it to the database.
         """
@@ -1067,10 +1195,7 @@ class Test_06_Review(TestDBStorageConsole):
         # Create a Place using the user_id and city_id
         with patch("sys.stdout", new=StringIO()) as output:
             arg = f'create Place city_id="{city_id}" user_id="{user_id}" ' +\
-                'name="Lovely_place" description="No_description_provided" ' +\
-                'number_rooms=3 number_bathrooms=1 max_guest=6 ' +\
-                'price_by_night=120 latitude=-37.773972 ' +\
-                'longitude=122.431297'
+                'name="Lovely_place"'
             HBNBCommand().onecmd(arg)
             place_id = output.getvalue().strip()
 
@@ -1102,6 +1227,108 @@ class Test_06_Review(TestDBStorageConsole):
                         "Failed to get Review ID from console output")
         self.assertRegex(review_id, r'^[0-9a-f-]{36}$')
 
+    def test_12_create_review_missing_user_id(self):
+        """
+        Test that creating a Review via the console with missing
+        user_id doesn't add it to the database.
+        """
+        self.assertNotEqual(self.get_table_entries_count(
+            "places"), 0, "places table is empty")
+        self.assertTrue(self.get_table_entries_count(
+            "places") >= 1, "places table is empty")
+
+        # 1. Get a existing place_id
+        query = 'SELECT id from places WHERE name=%s;'
+        self.cursor.execute(query, ("Happy place",))
+        place_id = self.cursor.fetchone()[0]
+
+        # 3. Create a Review without a user_id
+        with patch("sys.stdout", new=StringIO()) as output:
+            arg = f'create Review place_id="{place_id}" ' +\
+                  'text="Amazing_place,_beautiful_beach"'
+            HBNBCommand().onecmd(arg)
+            review_id = output.getvalue().strip()
+
+        self.assertEqual(review_id, "")
+        self.assertFalse(review_id)
+
+    def test_13_create_review_non_existent_user_id(self):
+        """
+        Test that creating a Review via the console with non_existent user_id
+        doesn't add it to the database.
+        """
+        self.assertNotEqual(self.get_table_entries_count(
+            "places"), 0, "places table is empty")
+        self.assertTrue(self.get_table_entries_count(
+            "places") >= 1, "places table is empty")
+
+        # 1. Get a existing place_id
+        query = 'SELECT id from places WHERE name=%s;'
+        self.cursor.execute(query, ("Happy place",))
+        place_id = self.cursor.fetchone()[0]
+
+        # 3. Create a Review with a non-existent user_id
+        with patch("sys.stdout", new=StringIO()) as output:
+            arg = f'create Review place_id="{place_id}" user_id="12345" ' +\
+                  'text="Amazing_place,_beautiful_beach"'
+            HBNBCommand().onecmd(arg)
+            review_id = output.getvalue().strip()
+
+        self.assertEqual(review_id, "")
+        self.assertFalse(review_id)
+
+    def test_14_create_review_missing_place_id(self):
+        """
+        Test that creating a Review via the console with missing
+        place_id doesn't add it to the database
+        """
+
+        self.assertNotEqual(self.get_table_entries_count(
+            "users"), 0, "users table is empty")
+        self.assertTrue(self.get_table_entries_count(
+            "users") >= 1, "users table is empty")
+
+        # 1. Get an exisiting user_id
+        query = 'SELECT id from users WHERE last_name=%s;'
+        self.cursor.execute(query, ("Snow",))
+        user_id = self.cursor.fetchone()[0]
+
+        # 2. Create a Review without a place_id
+        with patch("sys.stdout", new=StringIO()) as output:
+            arg = f'create Review user_id="{user_id}" ' +\
+                  'text="Amazing_place,_beautiful_beach"'
+            HBNBCommand().onecmd(arg)
+            review_id = output.getvalue().strip()
+
+        self.assertEqual(review_id, "")
+        self.assertFalse(review_id)
+
+    def test_15_create_review_non_existent_place_id(self):
+        """
+        Test that creating a Review via the console with non_existent
+        place_id doesn't add it to the database.
+        """
+
+        self.assertNotEqual(self.get_table_entries_count(
+            "users"), 0, "users table is empty")
+        self.assertTrue(self.get_table_entries_count(
+            "users") >= 1, "users table is empty")
+
+        # 1. Get an exisiting user_id
+        query = 'SELECT id from users WHERE last_name=%s;'
+        self.cursor.execute(query, ("Snow",))
+        user_id = self.cursor.fetchone()[0]
+
+        # 2. Create a Review with non-existent place_id
+        with patch("sys.stdout", new=StringIO()) as output:
+            arg = f'create Review place_id="12345" user_id="{user_id}" ' +\
+                  'text="Amazing_place,_beautiful_beach"'
+            HBNBCommand().onecmd(arg)
+            review_id = output.getvalue().strip()
+
+        self.assertEqual(review_id, "")
+        self.assertFalse(review_id)
+
 
 class Test_07_Amenity(TestDBStorageConsole):
     """
@@ -1114,8 +1341,10 @@ class Test_07_Amenity(TestDBStorageConsole):
     TestDBStorageConsole.create_attr_for_entries_created_based_table_name(
         tablename)
 
-    def test_03_create_one_amenity_with_valid_attributes(self):
-        """Test that creating a User via the console adds it to the database"""
+    def test_03_create_amenity_with_valid_attributes(self):
+        """
+        Test that creating an Amenity via the console adds it to the database
+        """
         # Capture console output
         with patch("sys.stdout", new=StringIO()) as output:
             HBNBCommand().onecmd('create Amenity name="Wifi"')
@@ -1127,7 +1356,9 @@ class Test_07_Amenity(TestDBStorageConsole):
         self.assertRegex(amenity_id, r'^[0-9a-f-]{36}$')
 
     def test_06_create_additional_amenity_with_valid_attributes(self):
-        """Test that creating a User via the console adds it to the database"""
+        """
+        Test that creating an Amenity via the console adds it to the database
+        """
         # Capture console output
         with patch("sys.stdout", new=StringIO()) as output:
             HBNBCommand().onecmd('create Amenity name="Oven"')
