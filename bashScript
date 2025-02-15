@@ -1,0 +1,6 @@
+#!/usr/bin/bash
+
+for value in $(find . -type f -name "*.py"):
+do
+	chmod +x "$value"
+done
