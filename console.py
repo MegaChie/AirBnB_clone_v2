@@ -4,6 +4,7 @@ import cmd
 import sys
 import re
 import json
+import sqlalchemy
 from models.base_model import BaseModel
 from models.user import User
 from models.place import Place
@@ -184,9 +185,13 @@ class HBNBCommand(cmd.Cmd):
         #     new_instance = HBNBCommand.classes[cls]()
         #     new_instance.save()
         #     print(new_instance.id)
-
-        new_instance.save()
-        print(new_instance.id)
+        try:
+            new_instance.save()
+        except sqlalchemy.exc.IntegrityError:
+            storage.rollback()
+            return
+        else:
+            print(new_instance.id)
 
     def help_create(self):
         """ Help information for the create method """
