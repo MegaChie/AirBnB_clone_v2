@@ -153,7 +153,6 @@ class HBNBCommand(cmd.Cmd):
 
             pattern = re.compile(attr_pattern, re.VERBOSE)
             matches = pattern.findall(params)
-
             if matches:
                 attr_dict = {}
                 for match in matches:
@@ -171,12 +170,11 @@ class HBNBCommand(cmd.Cmd):
                             attr_dict[key] = val.translate(translator)
                         else:
                             attr_dict[key] = val
-
                 new_instance = HBNBCommand.classes[cls](**attr_dict)
 
         try:
             new_instance.save()
-        except sqlalchemy.exc.IntegrityError:
+        except sqlalchemy.exc.IntegrityError as e:
             storage.rollback()
             return
         else:
