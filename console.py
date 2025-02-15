@@ -170,13 +170,8 @@ class HBNBCommand(cmd.Cmd):
 
                 new_instance = HBNBCommand.classes[cls](**attr_dict)
 
-        try:
-            new_instance.save()
-        except sqlalchemy.exc.IntegrityError:
-            storage.rollback()
-            return
-        else:
-            print(new_instance.id)
+        new_instance.save()
+        print(new_instance.id)
 
     def help_create(self):
         """Help information for the create method."""
