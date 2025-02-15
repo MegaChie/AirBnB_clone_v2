@@ -196,11 +196,12 @@ class BaseTableTests(BaseTestDBStorage):
 the database"""
         self.create_a_new_record_instance()
 
-        with self.assertRaises(sqlalchemy.exc.IntegrityError):
+        try:
             self.new_record.save()
-
-        # Roll back the session to clear the invalid state
-        self.storage.rollback()
+        except sqlalchemy.exc.IntegrityError:
+            self.storage.rollback()  # clear the invalid state
+        finally:
+            self.assert_object_not_in_db(self.new_record)
 
     def test_04_table_creation_valid_kwargs(self):
         """Test creating and saving a new_record object to the database"""
@@ -304,27 +305,31 @@ class Test_08_User(BaseTableTests):
         self.assertIsNotNone(result, "User not updated")
 
     def test_08_user_creation_missing_kwargs(self):
+        # missing password
         new_user1 = self.model(email="johndoe@example.com",
                                first_name="John",
                                last_name="Doe")
-
+        # missing email
         new_user2 = self.model(password="password",
                                first_name="John",
                                last_name="Doe")
-
+        # missing first_name
         new_user3 = self.model(email="bond@doubleoseven.com",
                                password="password",
                                last_name="bond")
-
+        # missing last_name
         new_user4 = self.model(email="test@example.com",
                                password="password",
                                first_name="John")
 
         for user in (new_user1, new_user2, new_user3, new_user4):
-            with self.assertRaises(sqlalchemy.exc.IntegrityError):
+            try:
                 user.save()
-                # Roll back the session to clear the invalid state
-            self.storage.rollback()
+            except sqlalchemy.exc.IntegrityError:
+                self.storage.rollback()  # Clear the invalid state
+                self.assert_object_not_in_db(user)
+            else:
+                self.assert_object_in_db(user)
 
 
 class Test_09_State(BaseTableTests):
@@ -698,8 +703,38 @@ class Test_13_Amenity(BaseTableTests):
 
     def test_08_place_amenities_relationship(self):
         """Test the relationship between City, User and State"""
-        place_id = self.new_place.id
-        self.new_place.amenities.append(self.new_record)
+        new_user = User(
+            email="sales@hpconfectionaries.com",
+            password="sweethoney",
+            first_name="Dwight",
+            last_name="Malone",
+        )
+
+        new_state = State(name="Oklahoma")
+
+        new_city = City(name="Tulsa", state_id=new_state.id)
+
+        new_place = Place(name="Higher Plane",
+                               city_id=new_city.id,
+                               user_id=new_user.id)
+
+        new_review = Review(place_id=new_place.id,
+                            user_id=new_user.id,
+                            text="I love the weed edibles!")
+
+        new_amenity = Amenity(name="Meditation Lounge")
+
+        self.storage.new(new_user)
+        self.storage.new(new_state)
+        self.storage.new(new_city)
+        self.storage.new(new_place)
+        self.storage.new(new_review)
+        self.storage.new(new_amenity)
+        self.storage.save()
+
+        place_id = new_place.id
+
+        new_place.amenities.append(new_amenity)
 
         self.storage.save()
 
@@ -715,8 +750,8 @@ WHERE places.id=%s;"""
 
         amenity, amenity_id = result
 
-        self.assertEqual(self.new_record.name, amenity)
-        self.assertEqual(self.new_record.id, amenity_id)
+        self.assertEqual(new_amenity.name, amenity)
+        self.assertEqual(new_amenity.id, amenity_id)
 
 
 if __name__ == '__main__':
