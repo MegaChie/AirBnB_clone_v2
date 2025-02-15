@@ -102,7 +102,6 @@ class DBStorage:
                   `<class_name>.<object_id>` and the value is the object
                   itself.
         """
-        self.reload()
 
         if cls is not None:
             classes = ('BaseModel',
@@ -162,26 +161,20 @@ class DBStorage:
         This method creates all tables if they don't exist and initializes
         a new session.
         """
-        try:
-            # Bind the engine to the Base's metadata
-            Base.metadata.bind = self.__engine
+        # Bind the engine to the Base's metadata
+        Base.metadata.bind = self.__engine
 
-            # Create all tables defined in the Base
-            Base.metadata.create_all(self.__engine)
+        # Create all tables defined in the Base
+        Base.metadata.create_all(self.__engine)
 
-            # Create a session factory
-            session_factory = sessionmaker(bind=self.__engine,
-                                           expire_on_commit=False)
+        # Create a session factory
+        session_factory = sessionmaker(bind=self.__engine,
+                                       expire_on_commit=False)
 
-            # Create a scoped session
-            Session = scoped_session(session_factory)
+        # Create a scoped session
+        Session = scoped_session(session_factory)
 
-        except OperationalError as e:
-            message = getattr(e, '_message')
-            print(message().partition(" ")
-                  [-1].strip('()').split(',')[-1])
-        else:
-            self.__session = Session()
+        self.__session = Session()
 
     def delete(self, obj=None):
         """
