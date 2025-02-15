@@ -173,18 +173,7 @@ class HBNBCommand(cmd.Cmd):
                             attr_dict[key] = val
 
                 new_instance = HBNBCommand.classes[cls](**attr_dict)
-        #         new_instance.save()
-        #         print(new_instance.id)
-        #     else:
-        #         print("Invalid param syntax. ")
-        #         print(
-        #             "[Usage]: create <className> " +
-        #             "<key name>=<value> [<key name>=<value>...]")
 
-        # else:
-        #     new_instance = HBNBCommand.classes[cls]()
-        #     new_instance.save()
-        #     print(new_instance.id)
         try:
             new_instance.save()
         except sqlalchemy.exc.IntegrityError:
