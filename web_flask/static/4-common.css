@@ -1,0 +1,12 @@
+/* Common styles */
+.clearfix::after {
+    content: "";
+    clear: both;
+    display: table;
+}
+
+.container {
+    width: 80%;
+    margin: auto;
+}
+

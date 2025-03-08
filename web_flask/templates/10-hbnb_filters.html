@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<HTML lang="en">
+    <HEAD>
+        <TITLE>HBNB</TITLE>
+        <link rel="stylesheet" href="/static/styles/3-footer.css" type="text/css">
+        <link rel="stylesheet" href="/static/styles/3-header.css" type="text/css">
+        <link rel="stylesheet" href="/static/styles/4-common.css" type="text/css">
+        <link rel="stylesheet" href="/static/styles/6-filters.css" type="text/css">
+    </HEAD>
+    <BODY>
+        <header class="clearfix">
+            <div class="logo">
+                <img src="/static/images/logo.png" alt="logo"/>
+                HBNB
+            </div>
+            <div class="filters">
+                <div class="dropdown">
+                    <button class="dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                        States
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                        {% for state in states %}
+                        <li><input type="checkbox" name="state" value="{{ state.id }}"> {{ state.name }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="dropdown">
+                    <button class="dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                        Cities
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                        {% for city in cities %}
+                        <li><input type="checkbox" name="city" value="{{ city.id }}"> {{ city.name }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="dropdown">
+                    <button class="dropdown-toggle" type="button" id="dropdownMenu3" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                        Amenities
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenu3">
+                        {% for amenity in amenities %}
+                        <li><input type="checkbox" name="amenity" value="{{ amenity.id }}"> {{ amenity.name }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </header>
+        <footer class="clearfix">
+            <div class="container">
+                <div class="footer">
+                    <div class="footer_title">© 2019 HBNB</div>
+                </div>
+            </div>
+        </footer>
+    </BODY>
+</HTML>
+
