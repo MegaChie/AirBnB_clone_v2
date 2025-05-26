@@ -21,6 +21,22 @@ This repository contains the initial stage of a student project to build a clone
 | 10. Console 1.0 | [console.py](https://github.com/justinmajetich/AirBnB_clone/blob/dev/console.py) [/models/engine/file_storage.py](https://github.com/justinmajetich/AirBnB_clone/blob/dev/models/engine/file_storage.py) | Update the console and file storage system to work dynamically with all  classes update file storage |
 <br>
 <br>
+
+## Team
+- Jesse Walusansa (JesseWK100)  
+- Bruno Mutabazi  
+
+## Environment Variables
+| Variable            | Purpose                         | Example       |
+|---------------------|---------------------------------|---------------|
+| HBNB_ENV            | dev or test                     | dev           |
+| HBNB_MYSQL_USER     | MySQL username                  | root          |
+| HBNB_MYSQL_PWD      | MySQL password                  | root_password |
+| HBNB_MYSQL_HOST     | MySQL host                      | localhost     |
+| HBNB_MYSQL_DB       | MySQL database name             | hbnb_dev_db   |
+| HBNB_TYPE_STORAGE   | file or db                      | db            |
+
+
 <center> <h2>General Use</h2> </center>
 
 1. First clone this repository.
