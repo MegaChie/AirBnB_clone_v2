@@ -150,9 +150,10 @@ class HBNBCommand(cmd.Cmd):
             atts = args[1::] # Isolate attributes
             new_instance = HBNBCommand.classes[args[0]]()
             for att in atts:
-                att = att.replace("\"", "").split("=") # Clean attributes
+                att = att.split("=") # separate name from value
                 att_name, att_val = att[0], att[1]
-                # If attribute has a defined type
+                att_val = att_val.replace("\"", "").replace("_", " ")
+                # If ttribute has a defined type
                 if att_name in self.types.keys():
                     setattr(new_instance, att_name,
                             self.types[att_name](att_val))
